@@ -20,6 +20,14 @@ const routes = [
 
 const router = createRouter({ history: createWebHistory(),routes})
 
+// si l'utilisateur va sur la page news il doit être connecté
+// router.beforeEach((to, from, next) => {
+//     if (to.path === '/news' && !localStorage.getItem('token')) {
+//         next('/login')
+//     }
+// })
+
+
 createApp(App).mount('#app')
 const app = createApp(App)
 app.use(BootstrapVue3)
