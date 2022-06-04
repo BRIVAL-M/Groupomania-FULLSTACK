@@ -1,9 +1,9 @@
-<script>
+<!-- <script>
 
 
 export default {
     name: "Card",
-    props: ["title,content"],// ajout des infos du form dans la card
+    props: ["name,title,content"],// ajout des infos du form dans la card
  
 }
 </script>
@@ -12,10 +12,10 @@ export default {
     <div class="card-header">
         <img src="/favicon.jpg" class="rounded-circle m-2" alt="Avatar">
         
-        Posté par :  </div>
-  <!-- <img src="https://picsum.photos/200/300" class="card-img-top" alt="..."> -->
+        Posté par : {{name}} </div>
+ <img src="https://picsum.photos/200/300" class="card-img-top" alt="..."> 
   <div class="card-body">
-    <h5 class="card-title">{{title}}</h5>
+    <h5  class="card-title">{{title}}</h5>
     <p class="card-text">{{content}}</p>
     <p class="card-text"><small class="text-muted">Last updated : upcoming option</small></p>
     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-hand-thumbs-up" viewBox="0 0 16 16">
@@ -37,4 +37,4 @@ img {
     
 } */
 
-</style>
+</style> -->

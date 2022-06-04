@@ -24,7 +24,7 @@ import "/App.css";
          
         .catch(error => { console.log(error);
           });
-          //localStorage.setItem('UserName', name); );
+          localStorage.setItem('UserName', name); 
         this.$router.push("/login");
 
  }

@@ -11,7 +11,7 @@ console.log(req.body)
 
   Post.create({//  MODIFIER ICI
     userId,
-   // name,
+    name,
     title,
     content,
    // imageUrl,
@@ -62,12 +62,16 @@ exports.modifyPost = (req, res, next) => {
 exports.deletePost = (req, res, next) => { 
 
   Post.findByIdAndDelete(req.params.id)
-    .then(post => {
-      const filename = post.imageUrl.split("/images/")[1]
-      fs.unlink(`images/${filename}`, () => {
-        res.status(200).json({ message: "Post supprimé" })
-      })
+    .then(() => {
+      res.status(200).json({ message: 'Post supprimé !' });
     })
+    // .then(post => {
+      
+    //   const filename = post.imageUrl.split("/images/")[1]
+    //   fs.unlink(`images/${filename}`, () => {
+    //     res.status(200).json({ message: "Post supprimé" })
+    //   })
+    // })
     .catch(error => res.status(500).json({ error }))
 }
 
@@ -82,6 +86,9 @@ exports.getAllPosts = (req, res, next) => {
     .then(posts => res.status(200).json(posts))
     .catch(error => res.status(400).json({ error }));
 }
+
+
+//Post.deleteMany({}).then(() => console.log("Posts deleted ")); // Delete all posts in the database
 
 //_______________________________________________ LIKE AND DISLIKE  
 

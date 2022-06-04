@@ -2,31 +2,10 @@
 
 
 <script>
-import useVuelidate from '@vuelidate/core';
-import { required,email,helpers} from '@vuelidate/validators'; // Contient les règles de validation ,maxLength,minValue,maxValue, 
 
-// const pwdForce = (value) => {// ne fonctionne pas ! 
-
-
-// RegExp(/[\w\W]{8,}/).test(value) &&
-// RegExp(/[0-9]+/).test(value) &&
-// RegExp(/[A-Z]+/).test(value) &&
-// RegExp(/[*^!$&;]/).test(value) 
-// };
-
-// const beSafe = helpers.withMessage('Le mot de passe doit contenir au moins 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial (ex: !, @, #, etc.)', pwdForce); // ajouté les chars spéciaux
-
-////////////////////////////////////////////
-
-
-
-
-  function checkForm(email,password) { 
-   
-
+function checkForm(email,password) { 
     
-   
-     const url = 'http://localhost:8080/api/auth/login';
+const url = 'http://localhost:8080/api/auth/login';
      console.log(url);
     
         console.log({email, password});//---------------------------------A delete !
@@ -34,48 +13,40 @@ import { required,email,helpers} from '@vuelidate/validators'; // Contient les r
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-         // 'Authorization': 'Bearer ' + localStorage.getItem('TOKEN :') 
+         
         },
         body: JSON.stringify({email, password})
       })
       .then(response => response.json())
        .then((res) => {
+         
+          if(res.error){//_____________________________________ Les erreurs de user.js dans le back
+            console.log(res.error);
+            alert(res.error);
+         return;
+          }
+         if(res.errors){//______________________________________ Les erreurs de validator.js dans le back
+              const findMsg = res.errors.find(function(element) {
+        return element.msg
+          });
+          if(findMsg){
+        alert(findMsg.msg);
+        return;
+      }
+         }
+         else{
+            localStorage.setItem('token', res.token);
+            localStorage.setItem('userId', res.userId);
+            this.$router.push("/news");
+          }
         
          ///////////////////////////////////////////////////////////recupérer le token
+        
+          // localStorage.setItem('token', res.token);
+          // localStorage.setItem('userId', res.userId);
+         
           console.log(res);
-          localStorage.setItem('TOKEN :', res.token);
-          localStorage.setItem('userId', res.userId);
-          
-          
-
-        ////////////////////////////////////// Pour retrouver les messages d'erreur du backend
-      console.log(res);
-      
-      // const fail = JSON.stringify(res.errors)
-      // console.log(fail);
-
-      const findMsg = res.errors.find(function(element) {
-        return element.msg
-      });
-      console.log(findMsg);
-       /////////////////////////////////////////////
-      
-      
-    })
-      //.then(data => {
-  
-     
-
-      
-       // console.log(data); // les vérifications du form back sont là....
- 
-  
-
-       
-      
-       
-       // this.$router.push("/news");
-    ///  })
+      })
       .catch(error => {
       
         console.log(error);
@@ -87,37 +58,10 @@ import { required,email,helpers} from '@vuelidate/validators'; // Contient les r
 import "bootstrap/dist/css/bootstrap.min.css";
 import "/App.css";
 export default {
-  name: "Login", 
-  validations:{
-    email: {
-      required, email
-    },
-    password: {
-      required,
- 
-       //beSafe // ne fonctionne pas ! 
-      
-    },
-  },
-  data,
+  name: "Login", data,
   methods:{
-    submit(){
-       console.log("success", this.v$);
-      this.v$.$validate()
-    //   if(!checkEmail(email)){
-    //   alert("Email incorrect");
-    //   return 
-    // }
-      if(this.v$.$errors.length===0) {
-        console.log("success", this.v$);
-        checkForm(this.email,this.password);
-        this.$router.push("/news");
-      }
-      //checkForm(this.email,this.password);
-    },
-     // checkForm,
-      
-  }
+    checkForm
+     }
 };
 
 function data(){
@@ -125,22 +69,9 @@ function data(){
   return {
     email: "",
         password: "",
-      
-        v$: useVuelidate(),
-        
-  }
+      }
 }
-
-
-
-
-
-   
-
-
-
 </script>
-
 <template>
 
  <div class="container-fluid">
@@ -164,14 +95,14 @@ function data(){
                                             <input id="inputEmail" type="email" placeholder="Email address" 
                                             required="" autofocus="" class="form-control rounded-pill border-0 shadow-sm px-4" 
                                             v-model="email"/>
-                                            <small  v-if="v$.email.$error">{{v$.email.$errors[0].$message}}</small>
+                                            <!-- <small  v-if="v$.email.$error">{{v$.email.$errors[0].$message}}</small> -->
 
                                         </div>
                                         <div class="mb-3">
                                             <input  id="inputPassword" type="password" placeholder="Password" 
                                             required="" class="form-control rounded-pill border-0 shadow-sm px-4 text-danger" 
                                             v-model="password"/>
-                                            <small  v-if="v$.password.$error">{{v$.password.$errors[0].$message}}</small>
+                                            <!-- <small  v-if="v$.password.$error">{{v$.password.$errors[0].$message}}</small> -->
                                                                                
                                             
                                           
@@ -183,8 +114,8 @@ function data(){
                                             <input id="customCheck1" type="checkbox" checked class="form-check-input" />
                                             <label for="customCheck1" class="form-check-label">Remember password</label>
                                         </div> -->
-                                        <div class="d-grid gap-2 mt-2">                                                                  <!--Virer le prevent apres !-->
-                                        <button type="submit" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm" @click.prevent="submit">Login</button><!---Attention au prevent-->
+                                        <div class="d-grid gap-2 mt-2">                                                                  
+                                        <button type="submit" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm" @click.prevent="checkForm(email,password)">Login</button><!---Attention au prevent-->
                                         <!-- <p class="mt- mb-3 text-muted" >Value:{{email}}</p>
                                          <p class="mt- mb-3 text-muted" >Value:{{password}}</p> -->
                                     

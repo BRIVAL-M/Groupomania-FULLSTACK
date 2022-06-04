@@ -22,7 +22,7 @@ const validate = [ // Hight password security in order to create a user
 ]
 
 const checkValidation = (req, res, next) => {
-    const errors = validationResult(req);
+    const errors = validationResult(req); // j'ai retiré les s à la fin  d'error partout
 
     if (!errors.isEmpty()) {
      

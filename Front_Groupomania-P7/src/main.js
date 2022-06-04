@@ -20,12 +20,38 @@ const routes = [
 
 const router = createRouter({ history: createWebHistory(),routes})
 
-// si l'utilisateur va sur la page news il doit être connecté
-// router.beforeEach((to, from, next) => {
-//     if (to.path === '/news' && !localStorage.getItem('token')) {
-//         next('/login')
-//     }
-// })
+/////////////////////////////////////////////////////////////////////// A revoir ... :/ 
+router.beforeEach((to, from) => {
+    console.log("from:", from)
+    console.log("to:", to)
+    if (isLoginRequired(to)) {
+       return router.push('/login')
+    }
+  
+  
+  
+})
+function isLoginRequired(to) {
+    if(!isPrivatePage(to))return false
+    if (!isTokenInCache()) return true
+    if(!isTokenValid()) return true
+    return false
+}
+ 
+function isPrivatePage(to) {
+    const publicPages = ['/login', '/signup']
+    return !publicPages.includes(to.path)
+}
+function isTokenInCache() {
+    return localStorage.getItem('token') != null
+}
+function isTokenValid() {
+    const token = localStorage.getItem('token')
+    return token != null //&& //jwt.verify(token, 'secret') // a revoir ...
+}
+
+
+
 
 
 createApp(App).mount('#app')

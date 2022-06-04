@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const postSchema = mongoose.Schema({
 
   userId: { type: String, required: true },
-  // name: {
-  //   type: String,
-  //   required: true,
-  //    maxlength: 30,
-  //    minlength: 3,
+  //  name: {
+  //    type: String,
+  // //   //required: true,
+  // //    //maxlength: 30,
+  // //   // minlength: 3,
   // },
   title: {
     type: String,
