@@ -5,30 +5,36 @@ const Post = require('../models/Post'); // Import sauce model
 exports.createPost = (req, res, next) => { 
 
 
- //// const imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+//const imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+//const imageUrl ="blob:http://localhost:3000/ed0adea1-e0f2-470f-8c09-c1a729ad5c3d"
+//const imageUrl = `${req.body.file.filename}://${req.get('host')}/images/${req.file.filename}`;
+
 console.log(req.body)
-  const { userId, name, title, content } = req.body;
+  const { userId, name, title, content,imageUrl } = req.body;
 
   Post.create({//  MODIFIER ICI
     userId,
     name,
     title,
     content,
-   // imageUrl,
+   imageUrl,
   
      //likes: 0,
      // usersLiked: [],
    
   })
     .then(() => {
+      // enregistrer l'image dans le dossier images
+     // fs.writeFile(`images/${req.imageUrl}`)
+
       res.status(201).json({ message: 'Post créé !' });
     })
-    .catch(error => {
-     /* fs.unlink(req.file.path, () => { 
-        res.status(500).json({ error });
-      });*/
-      console.log(error)
-    });
+    // .catch(error => {
+    //   fs.unlink(req.file.path, () => { 
+    //     res.status(500).json({ error });
+    //   });
+    //   console.log(error)
+    // });
 }
 
 exports.modifyPost = (req, res, next) => { 
@@ -38,7 +44,8 @@ exports.modifyPost = (req, res, next) => {
     {
       ...JSON.parse(req.body.post),
 
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // 
+     // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // 
+    // imageUrl: req.file.path,
 
     } : { ...req.body }; 
 
@@ -47,10 +54,10 @@ exports.modifyPost = (req, res, next) => {
     .then(post => {
 
       if (req.file) {
-        const filename = post.imageUrl.split("/images/")[1]
-        fs.unlink(`images/${filename}`, () => {
-          res.status(200).json({ message: 'Post modifié !' });
-        });
+        // const filename = post.imageUrl.split("/images/")[1]
+        // fs.unlink(`images/${filename}`, () => {
+        //   res.status(200).json({ message: 'Post modifié !' });
+        // });
       } else {
         res.status(200).json({ message: 'Post modifié !' });
       }
@@ -67,13 +74,13 @@ exports.deletePost = (req, res, next) => {
       
       res.status(200).json({ message: 'Post supprimé !' });
     })
-    // .then(post => {
+    .then(post => {
       
-    //   const filename = post.imageUrl.split("/images/")[1]
-    //   fs.unlink(`images/${filename}`, () => {
-    //     res.status(200).json({ message: "Post supprimé" })
-    //   })
-    // })
+      // const filename = post.imageUrl.split("/images/")[1]
+      // fs.unlink(`images/${filename}`, () => {
+      //   res.status(200).json({ message: "Post supprimé" })
+      // })
+    })
     .catch(error => res.status(500).json({ error }))
 }
 

@@ -7,11 +7,10 @@ function logout() {//_____________________________________ Logout user
   this.$router.push("/login");
 }
 
-// function reload(){
-//   window.location.reload(); //  en attendant...
 
 
-// }
+
+
 function userName() {//_____________________________________ Find the user name from him email
   const email = localStorage.getItem('email');
   const name = email.substring(0, email.lastIndexOf("@"));
@@ -19,7 +18,7 @@ function userName() {//_____________________________________ Find the user name 
 }
 
 
-function sendPost(post, name, title, content) { //_________________________________________ Send a post
+function sendPost(post, name, title, content,imageUrl) { //_________________________________________ Send a post
 
   if (title == "" || content == "") {
     return;
@@ -28,25 +27,23 @@ function sendPost(post, name, title, content) { //______________________________
 
   console.log(JSON.stringify(post));
 
-  fetch(url, {
+fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      //'accept': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem("token")
     },
-    body: JSON.stringify(post, name, title, content)
-
-
-  })
+    body: JSON.stringify(post, name, title, content,imageUrl)
+})
     .then(response => response.json())
     .then((res) => {
-
-      // reload();
-      console.log(res);
-
+      
+ console.log(res);
     })
-
+    .catch(error => console.error('Error:', error));
 }
+
 
 function data() { // _____________________________________ Data of user's posts
 
@@ -58,7 +55,7 @@ function data() { // _____________________________________ Data of user's posts
       name: userName(),
       title: '',
       content: '',
-      //  imageUrl: '',
+        imageUrl: '',
       //      likes: 0,
       //      usersLiked: [],
     },
@@ -83,8 +80,9 @@ function getPosts() {//_____________________________________ Get all posts
 }
 
 
-function deletePost(id) {//_____________________________________ Delete a post by id
-  console.log(id)
+function deletePost(id) {//_____________________________________ Delete a post by id 
+
+ console.log(id)
   const url = 'http://localhost:8080/api/posts/' + id;
 
   fetch(url, {
@@ -115,11 +113,21 @@ export default {
         this.post.name = userName(),
         this.post.title = this.title,
         this.post.content = this.content,
+        this.post.imageUrl = this.imageUrl,
         sendPost(this.post)
-      // this.$router.go()
+      // this.$router.go()// Pour reset les inputs du form fait bug les images...
+     
+    },
+    fileSelect(e) {
+      console.log(e.target.files[0]);
+    this.imageUrl = URL.createObjectURL(e.target.files[0]);
+   this.imageName = e.target.files[0].name;
+    console.log(this.imageName);
+     console.log(this.imageUrl);
+    
     },
     
-    
+   
     getPosts,
     logout,
     deletePost,
@@ -179,10 +187,17 @@ export default {
     </div>
     <div class="d-flex  mt-1">
       <label for="file-input" class="btn btn-secondary btn-lg mt-1">Add Image</label>
-      <input id="file-input" type="file" />
+      <input id="file-input" type="file" @change="fileSelect"/>
+    
+      
+
+      <!-- <img class="img-fluid" v-if ="fileSelect" :src="imageUrl" alt="image" width="100" height="100"> -->
+      <!-- <img class="img-fluid" v-if ="fileSelect" :src="imageUrl" alt="image" width="100" height="100"> -->
+      
+      
       <!-- <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto" @click="sendPost(this.post,title,content),getPosts(this.post,title,content)">Send</button> -->
       <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto"
-        @click="sendPost(this.post, name, title, content), getPosts(this.post, name, title, content)">Send</button>
+        @click="sendPost(this.post, name, title, content,imageUrl), getPosts(this.post, name, title, content,imageUrl)">Send</button>
     </div>
     <hr class="mt-4 dropdown-divider" />
     <!-- <Card></Card> -->
@@ -202,7 +217,8 @@ export default {
 
           Posté par @{{ post.name }}
         </div>
-        <img src="https://picsum.photos/200/300" class="card-img-top" alt="...">
+     
+        <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top" alt="...">
         <div class="card-body">
           <h5 class="card-title">{{ post.title }}</h5>
           <p class="card-text">{{ post.content }}</p>

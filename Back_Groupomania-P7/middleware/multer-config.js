@@ -4,12 +4,14 @@ const MIME_TYPE = { // Object containing the MIME type of the files that can be 
     'image/png': 'png',
     'image/jpeg': 'jpg',
     'image/jpg': 'jpg',
-    'image/gif': 'gif'
+   // 'image/gif': 'gif'
 };
 
 const storage = multer.diskStorage({ // Create the storage for the files
 
     destination: (req, file, cb) => { // Create the destination for the files
+       
+
 
         cb(null, 'images'); // The files are saved in the "images" folder
     },
@@ -20,6 +22,9 @@ const storage = multer.diskStorage({ // Create the storage for the files
         cb(null, name + '_' + Date.now() + '.' + extension);
     }
 });
+
+
+
 
 module.exports = multer({ storage: storage, limits: { fileSize: 2097152 } }).single('image');// limits 2mb
 

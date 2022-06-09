@@ -14,16 +14,16 @@ const postSchema = mongoose.Schema({
     type: String,
     required: true,
      maxlength: 100,
-      minlength: 3,
+      minlength: 1,
   },
   content: {
     type: String,
     required: true,
      maxlength: 100,
-     minlength: 3,
+     minlength: 1,
   },
 
- // imageUrl: { type: String,  },
+ imageUrl: { type: String,  },
 
  // likes: { type: Number, required: true },
  
