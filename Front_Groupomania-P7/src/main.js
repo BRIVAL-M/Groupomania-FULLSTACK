@@ -13,6 +13,14 @@ import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import {createRouter,createWebHistory} from 'vue-router'
 
 const routes = [
+    // { path: '/', component: News, beforeEnter: (to, from, next) => {
+    //     if (isLoginRequired(to)) {
+    //         next('/login')
+    //     } else {
+    //         next()
+    //     }
+    // } },
+    //{ path: '/', component: Home },
     { path: '/signup', component: Signup},
     { path: '/login', component: Login},
     { path: '/news', component: News},
@@ -46,8 +54,10 @@ function isTokenInCache() {
     return localStorage.getItem('token') != null
 }
 function isTokenValid() {
+    
     const token = localStorage.getItem('token')
-    return token != null //&& //jwt.verify(token, 'secret') // a revoir ...
+    return token != null //&& jwt.verify(token, '9490588a-bf5b-4cac-91d8-8718a916597b') // a revoir ...
+    
 }
 
 

@@ -63,6 +63,8 @@ exports.deletePost = (req, res, next) => {
 
   Post.findByIdAndDelete(req.params.id)
     .then(() => {
+      
+      
       res.status(200).json({ message: 'Post supprimé !' });
     })
     // .then(post => {
@@ -75,7 +77,7 @@ exports.deletePost = (req, res, next) => {
     .catch(error => res.status(500).json({ error }))
 }
 
-exports.getOnePost = (req, res, next) => { 
+exports.getOnePost = (req, res, next) => { // ------------------------------------------------------a delete
   Post.findOne({ _id: req.params.id })
     .then(post => res.status(200).json(post))
     .catch(error => res.status(404).json({ error }));
