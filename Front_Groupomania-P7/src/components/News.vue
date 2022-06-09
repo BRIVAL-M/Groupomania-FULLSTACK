@@ -118,6 +118,8 @@ export default {
         sendPost(this.post)
       // this.$router.go()
     },
+    
+    
     getPosts,
     logout,
     deletePost,
@@ -127,6 +129,9 @@ export default {
   components: {
     // Card,
   },
+  mounted() { // mounted() est appelé une fois que le composant est chargé
+  this.getPosts();
+  }
 }
 
 </script>
