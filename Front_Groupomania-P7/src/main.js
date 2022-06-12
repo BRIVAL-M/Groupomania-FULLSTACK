@@ -3,6 +3,7 @@ import App from './App.vue'
 import Signup from './components/Signup.vue'
 import Login from './components/Login.vue'
 import News from './components/News.vue'
+import Edit from './components/Edit.vue'
 
 
 
@@ -24,6 +25,7 @@ const routes = [
     { path: '/signup', component: Signup},
     { path: '/login', component: Login},
     { path: '/news', component: News},
+    {path: '/edit/:id', component: Edit},
 ]
 
 const router = createRouter({ history: createWebHistory(),routes})

@@ -1,15 +1,17 @@
 const Post = require('../models/Post'); // Import sauce model
-//const fs = require('fs');// Fs is required to delete the image from the folder when we delete the sauce
+const fs = require('fs');// Fs is required to delete the image from the folder when we delete the sauce
 
 
 exports.createPost = (req, res, next) => { 
-
-
-//const imageUrl = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-//const imageUrl ="blob:http://localhost:3000/ed0adea1-e0f2-470f-8c09-c1a729ad5c3d"
 //const imageUrl = `${req.body.file.filename}://${req.get('host')}/images/${req.file.filename}`;
 
-console.log(req.body)
+
+//const imageUrl ="blob:http://localhost:3000/ed0adea1-e0f2-470f-8c09-c1a729ad5c3d"
+
+
+
+
+
   const { userId, name, title, content,imageUrl } = req.body;
 
   Post.create({//  MODIFIER ICI
@@ -18,14 +20,17 @@ console.log(req.body)
     title,
     content,
    imageUrl,
-  
-     //likes: 0,
-     // usersLiked: [],
+    likes: 0, // S ou pas s
+     usersLiked: [], // pas sur
    
   })
+
     .then(() => {
       // enregistrer l'image dans le dossier images
-     // fs.writeFile(`images/${req.imageUrl}`)
+      
+    
+console.log(req.body)
+      
 
       res.status(201).json({ message: 'Post créé !' });
     })

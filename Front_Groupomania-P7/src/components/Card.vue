@@ -1,4 +1,4 @@
-<!-- <script>
+<script>
 
 
 export default {
@@ -37,4 +37,4 @@ img {
     
 } */
 
-</style> -->
+</style>
