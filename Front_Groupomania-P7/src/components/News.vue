@@ -1,5 +1,23 @@
 <script>
 
+// function myPost(id,userId){
+// const postId = this.posts.find(post => post.id == id);
+// console.log(postId);
+// const userId = localStorage.getItem("userId");
+// console.log(userId);
+// if (postId.userId != userId) {
+//     alert("Vous n'avez pas le droit d'éditer ce post");
+//     return ;
+
+
+
+ 
+// }
+// else {
+//     return false;
+// }
+// }
+
 function logout() {//_____________________________________ Logout user
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
@@ -9,7 +27,15 @@ function logout() {//_____________________________________ Logout user
 
 
 
-
+// function displayBtn(){
+//  
+//   if (localStorage.getItem("userId") ==this.post.userId) {
+//     return true;
+//   }
+//   else {
+//     return false;
+//   }
+// }
 
 function userName() {//_____________________________________ Find the user name from him email
   const email = localStorage.getItem('email');
@@ -20,9 +46,9 @@ function userName() {//_____________________________________ Find the user name 
 
 function sendPost(post, name, title, content,imageUrl,like,usersLiked) { //_________________________________________ Send a post
 
-  if (title == "" || content == "") {
-    return;
-  }
+  // if (title == "" || content == "") {
+  //   return;
+  // }
   const url = 'http://localhost:8080/api/posts';
 
   console.log(JSON.stringify(post));
@@ -38,11 +64,23 @@ fetch(url, {
 })
     .then(response => response.json())
     .then((res) => {
+   
+     
+//this.post = res;
      
       
  console.log(res);
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        if (error.status !== 200) {
+       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+       localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        this.$router.push("/login");
+        //console.log(error);
+      }
+    });
 }
 
 
@@ -57,16 +95,19 @@ function data() { // _____________________________________ Data of user's posts
       title: '',
       content: '',
         imageUrl: '',
-      //      likes: 0,
-      //      usersLiked: [],
+           likes: 0,
+           usersLiked: [],
     },
+   
+}
 
-  }
 }
 
 
 
 function getPosts() {//_____________________________________ Get all posts 
+
+  
 
   const url = 'http://localhost:8080/api/posts';
   fetch(url, {
@@ -79,18 +120,43 @@ function getPosts() {//_____________________________________ Get all posts
     .then(response => response.json())
     .then((res) => {
       console.log(res);
+ 
+      
      this.posts = res.reverse();
       
      
 
      // this.posts = res;
     })
+    .catch(error => {
+
+      if (error.status !== 200) {
+       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+       localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        this.$router.push("/login");
+        //console.log(error);
+      }
+      console.log(error);
+    });
 }
 
 
 function deletePost(id) {//_____________________________________ Delete a post by id 
 
- console.log(id)
+
+
+
+
+
+
+
+
+
+
+
+console.log(id)
   const url = 'http://localhost:8080/api/posts/' + id;
 
   fetch(url, {
@@ -104,13 +170,20 @@ function deletePost(id) {//_____________________________________ Delete a post b
     .then(response => response.json())
     .then((res) => {
       console.log(res);
-      this.posts = res;
+      
+    
+      
+     // this.posts = res;
+
       this.getPosts();// a voir mais ce n'est pas mal
     })
 }
+
 //import Card from "./Card.vue"; // pour le moment je ne peux pas binder les infos de l'utilisateur dans le card 
 
 function editPost(id) {//_____________________________________ Edit a post by id 
+
+
 
   const url = 'http://localhost:8080/api/posts/' + id;
   fetch(url, {
@@ -124,12 +197,33 @@ function editPost(id) {//_____________________________________ Edit a post by id
     .then((res) => {
       console.log(res);
       this.post = res;
+      this.$router.push("/edit/" + id);
     })
 
-  this.$router.push("/edit/" + id);
+  //this.$router.push("/edit/" + id);
+    .catch(error => {
+        if (error.status !== 200) {
+       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");//_____ Get  if the token is valid !
+       localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        this.$router.push("/login");
+        //console.log(error);
+      }
+    });
+ 
 }
 
-function likePost(id,userId,like) {//_____________________________________ Like a post by id 
+function likePost(id,userId,like,usersLiked) {//_____________________________________ Like a post by id 
+const getLike = this.post.likes;
+
+console.log(getLike);
+if (getLike == true ) {
+  alert("Vous avez déjà aimé ce post");// a revoir avec la liste des userLiked
+  return;
+}
+  
+
 
 
 if(like=1){ // ______________________________ Strange thing !
@@ -148,14 +242,17 @@ if(like=1){ // ______________________________ Strange thing !
     },
     body: JSON.stringify({
       like: like,
-      usersLiked: userId,
+      usersLiked: userName(),
       id: id
     })
   })
     .then(response => response.json())
     .then((res) => {
       console.log(res);
-      this.posts = res;
+      
+     // this.post.usersLiked.push(userId);/// pas bon !!!!
+     // this.posts = res;
+     
 
       this.getPosts(); // Trouver une solution pour que ca marche mieux 
       //this.$router.go();
@@ -164,6 +261,8 @@ if(like=1){ // ______________________________ Strange thing !
   console.log(id);
   console.log(userId);
   console.log(like);
+  console.log(usersLiked);/// non
+  console.log();
 }
 
 
@@ -176,10 +275,10 @@ export default {
         this.post.title = this.title,
         this.post.content = this.content,
         this.post.imageUrl = this.imageUrl,
-        this.post.like = 0,
-        this.post.usersLiked = [],
+        this.post.likes = 0,/// s !!!!!!!!!!!!!!!!!!!!!!!!!!!
+        this.post.usersLiked = userName(),
         sendPost(this.post)
-      // this.$router.go()// Pour reset les inputs du form fait bug les images...
+   
      
     },
     fileSelect(e) {
@@ -201,6 +300,7 @@ export default {
    
     
     logout,
+
     deletePost,
 
     editPost
@@ -208,11 +308,12 @@ export default {
   components: {
     // Card,
   },
+  
+ 
+ 
   mounted() { // mounted() est appelé une fois que le composant est chargé
   this.getPosts();
- 
-  
-  }
+}
 }
 
 </script>
@@ -230,7 +331,7 @@ export default {
           <ul class="navbar-nav">
             <li class="nav-item">
               <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
-              <button class="btn btn-secondary btn-lg mt-1 m-1" @click="getPosts(this.post, name, title, content)">All
+              <button class="btn btn-secondary btn-lg mt-1 m-1" @click="getPosts(this.post, name, title, content,usersLiked)">All
                 posts</button>
               <button class="btn btn-secondary btn-lg mt-1 m-1" @click="logout()">Logout</button>
             </li>
@@ -264,17 +365,10 @@ export default {
         @click="sendPost(this.post, name, title, content,imageUrl,like,usersLiked), getPosts(this.post, name, title, content,imageUrl,like,usersLiked) ">Send</button>
     </div>
     <hr class="mt-4 dropdown-divider" />
-    <!-- <Card></Card> -->
+  
 
     <li v-for="post in posts">
-      <!-- <div class="card">
-  <div class="card-body">
-    <p class="card-text">{{post.name}}</p>
-    <h5 class="card-title">{{post.title}}</h5>
-    <p class="card-text">{{post.content}}</p>
-    <p class="card-text"><small class="text-muted">{{post.name}}</small></p>
-  </div>
-</div> -->
+ 
       <div class="card mb-3 m-auto">
         <div class="card-header">
           <img src="/img_logo/icon.png" class="rounded-circle m-2" alt="Avatar">
@@ -291,26 +385,19 @@ export default {
           <div class="d-flex bg-light">
        
            
-         <!--Afficher la valeur des likes-->
-         <!-- <p class="card-text">{{ post.likes }}</p>
-          
-            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor"
-              class="bi bi-hand-thumbs-up" viewBox="0 0 16 16" @click=" likePost(post._id,post.userId,post.likes)">
-              <path
-                d="M8.864.046C7.908-.193 7.02.53 6.956 1.466c-.072 1.051-.23 2.016-.428 2.59-.125.36-.479 1.013-1.04 1.639-.557.623-1.282 1.178-2.131 1.41C2.685 7.288 2 7.87 2 8.72v4.001c0 .845.682 1.464 1.448 1.545 1.07.114 1.564.415 2.068.723l.048.03c.272.165.578.348.97.484.397.136.861.217 1.466.217h3.5c.937 0 1.599-.477 1.934-1.064a1.86 1.86 0 0 0 .254-.912c0-.152-.023-.312-.077-.464.201-.263.38-.578.488-.901.11-.33.172-.762.004-1.149.069-.13.12-.269.159-.403.077-.27.113-.568.113-.857 0-.288-.036-.585-.113-.856a2.144 2.144 0 0 0-.138-.362 1.9 1.9 0 0 0 .234-1.734c-.206-.592-.682-1.1-1.2-1.272-.847-.282-1.803-.276-2.516-.211a9.84 9.84 0 0 0-.443.05 9.365 9.365 0 0 0-.062-4.509A1.38 1.38 0 0 0 9.125.111L8.864.046zM11.5 14.721H8c-.51 0-.863-.069-1.14-.164-.281-.097-.506-.228-.776-.393l-.04-.024c-.555-.339-1.198-.731-2.49-.868-.333-.036-.554-.29-.554-.55V8.72c0-.254.226-.543.62-.65 1.095-.3 1.977-.996 2.614-1.708.635-.71 1.064-1.475 1.238-1.978.243-.7.407-1.768.482-2.85.025-.362.36-.594.667-.518l.262.066c.16.04.258.143.288.255a8.34 8.34 0 0 1-.145 4.725.5.5 0 0 0 .595.644l.003-.001.014-.003.058-.014a8.908 8.908 0 0 1 1.036-.157c.663-.06 1.457-.054 2.11.164.175.058.45.3.57.65.107.308.087.67-.266 1.022l-.353.353.353.354c.043.043.105.141.154.315.048.167.075.37.075.581 0 .212-.027.414-.075.582-.05.174-.111.272-.154.315l-.353.353.353.354c.047.047.109.177.005.488a2.224 2.224 0 0 1-.505.805l-.353.353.353.354c.006.005.041.05.041.17a.866.866 0 0 1-.121.416c-.165.288-.503.56-1.066.56z" />
-            </svg> --><div class = "like">
-  <div id = "heart" @click=" likePost(post._id,post.userId,post.likes)">
+      <div class = "like">
+  <div id = "heart" @click=" likePost(post._id,post.userId,post.likes,post.usersLiked)">
     <div id = "left" class = "segments"></div>
     <div id = "right" class = "segments"></div>
   </div>
   <div id = "like-count">{{ post.likes }}</div>
 </div>
-            <button id="edit" type="button" class="btn btn-light btn-lg  ms-auto like" @click="editPost(post._id)">Edit</button>
+            <button  id="edit" type="button" class="btn btn-light btn-lg  ms-auto like" @click="editPost(post._id)">Edit</button>
 
 
 
 
-            <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto like"
+            <button id="delete" type="button" class="btn btn-danger btn-lg mt-1 ms-auto like"
               @click="deletePost(post._id)">Delete</button>
           </div>
         </div>
@@ -399,6 +486,7 @@ max-height: 30rem;
  
   
 }
+
 
 #heart{
   height:20%;

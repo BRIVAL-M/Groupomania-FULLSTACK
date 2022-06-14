@@ -3,7 +3,12 @@ const fs = require('fs');// Fs is required to delete the image from the folder w
 
 
 exports.createPost = (req, res, next) => { 
-//const imageUrl = `${req.body.file.filename}://${req.get('host')}/images/${req.file.filename}`;
+  // get url after blob/ in the imageUrl
+ // const blob = req.url.split('/')[2]
+ 
+
+//const imageUrl =  `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
+//const imageUrl =  `${req.protocol}://${req.get('host')}/images/${blob}`;
 
 
 //const imageUrl ="blob:http://localhost:3000/ed0adea1-e0f2-470f-8c09-c1a729ad5c3d"
@@ -12,7 +17,7 @@ exports.createPost = (req, res, next) => {
 
 
 
-  const { userId, name, title, content,imageUrl } = req.body;
+  const { userId, name, title, content,imageUrl,usersLiked } = req.body;
 
   Post.create({//  MODIFIER ICI
     userId,
@@ -21,7 +26,7 @@ exports.createPost = (req, res, next) => {
     content,
    imageUrl,
     likes: 0, // S ou pas s
-     usersLiked: [], // pas sur
+     usersLiked // pas sur !!!!!!!!!!!!!
    
   })
 

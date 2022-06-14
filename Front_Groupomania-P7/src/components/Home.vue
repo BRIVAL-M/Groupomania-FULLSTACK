@@ -1,4 +1,4 @@
-<!-- <script>
+<script>
 import "bootstrap/dist/css/bootstrap.min.css";
 import "/App.css";
 export default {
@@ -27,14 +27,13 @@ export default {
                                     <p class="text-muted mb-4 text-center">Restez connecté à l'entreprise même durant vos congés !</p>
                                     <form>
                                         <div class="d-grid gap-2 mt-2">                                                                  
-                                        <button type="submit" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm" @click.prevent="checkForm(email,password)">Login</button><!---Attention au prevent-->
-                                        <!-- <p class="mt- mb-3 text-muted" >Value:{{email}}</p>
-                                         <p class="mt- mb-3 text-muted" >Value:{{password}}</p> -->
-                                    
+                                      
+                                     <router-link to = "/signup" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm">Inscription</router-link>
+                                    <router-link to = "/login" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm">Connexion</router-link>
                                        
                                         </div>
                                         
-                                        <div class="text-center d-flex justify-content-between mt-4"><p>Vous n'avez pas de compte ? <router-link to = "/signup">SIGN IN</router-link></p></div>
+                                        
                                     </form>
                                 </div>
                             </div>
@@ -44,6 +43,6 @@ export default {
                 </div>
 
             </div>
-        </div> -->
+        </div>
 
 </template>  

@@ -115,18 +115,13 @@ function data() {
                                         </div> -->
                   <div class="d-grid gap-2 mt-2">
                     <button type="submit" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm"
-                      @click.prevent="logUser(email, password)">Login</button>
-                    <!---Attention au prevent-->
-                    <!-- <p class="mt- mb-3 text-muted" >Value:{{email}}</p>
-                                         <p class="mt- mb-3 text-muted" >Value:{{password}}</p> -->
+                      @click.prevent="logUser(email, password)">Connexion</button>
+                  <router-link to="/signup" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm">Je n'ai pas de compte !</router-link>
 
 
                   </div>
 
-                  <div class="text-center d-flex justify-content-between mt-4">
-                    <p>Vous n'avez pas de compte ? <router-link to="/signup">SIGN IN</router-link>
-                    </p>
-                  </div>
+                 
                 </form>
               </div>
             </div>

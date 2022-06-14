@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import Home from './components/Home.vue'
 import Signup from './components/Signup.vue'
 import Login from './components/Login.vue'
 import News from './components/News.vue'
@@ -21,7 +22,7 @@ const routes = [
     //         next()
     //     }
     // } },
-    //{ path: '/', component: Home },
+    { path: '/', component: Home },
     { path: '/signup', component: Signup},
     { path: '/login', component: Login},
     { path: '/news', component: News},
@@ -49,7 +50,7 @@ function isLoginRequired(to) {
 }
  
 function isPrivatePage(to) {
-    const publicPages = ['/login', '/signup']
+    const publicPages = ['/login', '/signup', '/']
     return !publicPages.includes(to.path)
 }
 function isTokenInCache() {
@@ -58,7 +59,11 @@ function isTokenInCache() {
 function isTokenValid() {
     
     const token = localStorage.getItem('token')
+    
+ 
+
     return token != null //&& jwt.verify(token, '9490588a-bf5b-4cac-91d8-8718a916597b') // a revoir ...
+    
     
 }
 

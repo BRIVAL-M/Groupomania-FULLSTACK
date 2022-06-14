@@ -29,9 +29,16 @@ function getPostById() {
             console.log(res);
             this.post = res;
         })
-        .catch(error => {
-            console.log(error);
-        });
+      .catch(error => {
+        if (error.status !== 200) {
+       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+       localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        this.$router.push("/login");
+        //console.log(error);
+      }
+    });
 }
 
 function updatePost(post, name, title, content, imageUrl, like, usersLiked) {
@@ -43,21 +50,26 @@ function updatePost(post, name, title, content, imageUrl, like, usersLiked) {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + localStorage.getItem("token")
         },
-        // body: JSON.stringify(this.post)
+        
         body: JSON.stringify(post, name, title, content, imageUrl, like, usersLiked)
     })
         .then(response => response.json())
         .then((res) => {
             console.log(res);
-            this.post = res;
-            //this.$router.push("/news");
+           // this.post = res;
+            
 
         })
         .catch(error => {
             console.log(error);
         });
+        
 }
+function rmImg(){
+   
+   this.imageUrl = ""
 
+}
 
 
 
@@ -88,15 +100,15 @@ export default {
     name: "Edit", data,
 
     methods: {
-        getPostById,
+        getPostById,rmImg,
 
         updatePost() {
             this.post.userId = localStorage.getItem("userId"),
                 this.post.name = userName(),
-                this.post.title = this.title,
-                this.post.content = this.content,
+                this.post.title = this.post.title,
+                this.post.content = this.post.content,
                 this.post.imageUrl = this.imageUrl,
-                this.post.like = 0,
+                this.post.likes = 0,// s !!!!!!!!!!!!!!!!!!!!!!!!!!
                 this.post.usersLiked = [],
                 updatePost(this.post)
         },
@@ -149,33 +161,39 @@ export default {
             <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">{{ post.title }}</h5>
+                
+ 
 
                 <p class="card-text">{{ post.content }}</p>
+               
             </div>
         </div>
         <div class="form-floating">
             <p class="text-center mt-3">Tu vas modifier ton post @{{ this.post.name }} !</p>
             <div class="d-flex bg-light">
 
-                <textarea class="form-control" placeholder="Title" required="" v-model="title"></textarea>
+                <textarea class="form-control" placeholder="Title" required="" v-model="post.title"></textarea>
                 <textarea class="form-control " placeholder="Tape your text" id="floatingTextarea"
-                    v-model="content"></textarea>
+                    v-model="post.content"></textarea>
 
 
             </div>
         </div>
         <div class="d-flex  mt-1">
 
-            <label for="file-input" class="btn btn-light  btn-lg mt-1 like">Add Image</label>
+            <label for="file-input" class="btn btn-light  btn-lg mt-1 like" @click="updatePost(this.post, name, title, content, imageUrl, like, usersLiked),getPostById()" >Add Image</label>
             <input id="file-input" type="file" @change="fileSelect" />
 
-            <button class="btn btn-primary btn-lg mt-1 like"
-                @click="updatePost(this.post, name, title, content, imageUrl, like, usersLiked)">Update</button>
-            <router-link to="/news" class="btn btn-light  btn-lg mt-1 like">Cancel</router-link>
-            <router-link to="/news" class="btn btn-light  btn-lg mt-1 like">All posts</router-link>
+           
+                
+          
+            <button class="btn btn-danger btn-lg mt-1 like"
+                @click="rmImg(this.post, imageUrl),updatePost(this.post, name, title, content, imageUrl, like, usersLiked),getPostById()">Delete image</button>
+                 <button class="btn btn-primary btn-lg mt-1 like"
+                @click="updatePost(this.post, name, title, content, imageUrl, like, usersLiked),getPostById()">Update</button>
+                <router-link to="/news" class="btn btn-light  btn-lg mt-1 like">All posts</router-link>
 
-            <!-- <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto like"
-        @click="sendPost(this.post, name, title, content,imageUrl,like,usersLiked), getPosts(this.post, name, title, content,imageUrl,like,usersLiked)">Send</button> -->
+           
         </div>
     </div>
 

@@ -95,13 +95,11 @@ export default {
                                     <div class="d-grid gap-2 mt-2">
                                         <button type="submit"
                                             class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm"
-                                            @click.prevent="signUser(email, password)">Sign in</button>
+                                            @click.prevent="signUser(email, password)">Inscription</button>
+
+                                            <router-link to="/login" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm">J'ai déjà un compte !</router-link>
                                     </div>
 
-                                    <div class="text-center d-flex justify-content-between mt-4">
-                                        <p>Vous avez déjà un compte ? <router-link to="/login">LOGIN</router-link>
-                                        </p>
-                                    </div>
                                 </form>
                             </div>
                         </div>
