@@ -39,12 +39,14 @@ console.log(req.body)
 
       res.status(201).json({ message: 'Post créé !' });
     })
-    // .catch(error => {
-    //   fs.unlink(req.file.path, () => { 
-    //     res.status(500).json({ error });
-    //   });
-    //   console.log(error)
-    // });
+    .catch(error => {
+      // fs.unlink(req.file.path, () => { 
+      //   res.status(500).json({ error });
+      // });
+      res.status(500).json({ error, message: 'Erreur lors de la création du post' });
+     
+      console.log(error)
+    });
 }
 
 exports.modifyPost = (req, res, next) => { 
@@ -78,11 +80,20 @@ exports.modifyPost = (req, res, next) => {
 
 exports.deletePost = (req, res, next) => { 
 
+  ///////////////////////////////////////////////////////
+
+
+  //////////////////////////////////////////////////////
+
   Post.findByIdAndDelete(req.params.id)
     .then(() => {
-      
-      
+      ////////////////////////////////////////////
+
+ 
+  ////////////////////////////////////////////////////    
       res.status(200).json({ message: 'Post supprimé !' });
+      console.log(req.params.id)
+   
     })
     .then(post => {
       

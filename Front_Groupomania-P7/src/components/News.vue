@@ -1,22 +1,6 @@
 <script>
 
-// function myPost(id,userId){
-// const postId = this.posts.find(post => post.id == id);
-// console.log(postId);
-// const userId = localStorage.getItem("userId");
-// console.log(userId);
-// if (postId.userId != userId) {
-//     alert("Vous n'avez pas le droit d'éditer ce post");
-//     return ;
 
-
-
- 
-// }
-// else {
-//     return false;
-// }
-// }
 
 function logout() {//_____________________________________ Logout user
   localStorage.removeItem("token");
@@ -25,35 +9,18 @@ function logout() {//_____________________________________ Logout user
   this.$router.push("/login");
 }
 
-
-
-// function displayBtn(){
-//  
-//   if (localStorage.getItem("userId") ==this.post.userId) {
-//     return true;
-//   }
-//   else {
-//     return false;
-//   }
-// }
-
 function userName() {//_____________________________________ Find the user name from him email
   const email = localStorage.getItem('email');
   const name = email.substring(0, email.lastIndexOf("@"));
   return name;
 }
 
-
 function sendPost(post, name, title, content,imageUrl,like,usersLiked) { //_________________________________________ Send a post
 
-  // if (title == "" || content == "") {
-  //   return;
-  // }
-  const url = 'http://localhost:8080/api/posts';
+const url = 'http://localhost:8080/api/posts';
 
   console.log(JSON.stringify(post));
-
-fetch(url, {
+  fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -64,6 +31,8 @@ fetch(url, {
 })
     .then(response => response.json())
     .then((res) => {
+
+    console.log(post.userId);
    
      
 //this.post = res;
@@ -80,8 +49,9 @@ fetch(url, {
         this.$router.push("/login");
         //console.log(error);
       }
-    });
+      })
 }
+
 
 
 function data() { // _____________________________________ Data of user's posts
@@ -143,45 +113,46 @@ function getPosts() {//_____________________________________ Get all posts
 }
 
 
-function deletePost(id) {//_____________________________________ Delete a post by id 
+function deletePost(id,userId) {//_____________________________________ Delete a post by id 
 
 
 
+const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
+if(currentUserId != userId){
+  alert("Ce n'est pas sympa de vouloir effacer un post que vous n'avez pas créé !");
+  return ;
+}
 
-
-
-
-
-
-
-
-
-console.log(id)
+if (confirm("Voulez-vous vraiment supprimer ce post ?")) { // Confirm the deletion of the post
   const url = 'http://localhost:8080/api/posts/' + id;
 
   fetch(url, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem("token")
+      'Authorization': 'Bearer ' + localStorage.getItem("token") 
     },
-
-  })
+})
     .then(response => response.json())
     .then((res) => {
       console.log(res);
       
-    
-      
-     // this.posts = res;
-
+      console.log("id:",id);
       this.getPosts();// a voir mais ce n'est pas mal
+ 
     })
+}
 }
 
 //import Card from "./Card.vue"; // pour le moment je ne peux pas binder les infos de l'utilisateur dans le card 
 
-function editPost(id) {//_____________________________________ Edit a post by id 
+function editPost(id,userId) {//_____________________________________ Edit a post by id 
+
+const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
+if(currentUserId != userId){
+  alert(" Vous souhaitez modifier un post qui n'est pas le votre !");
+  return ;
+}
 
 
 
@@ -214,25 +185,31 @@ function editPost(id) {//_____________________________________ Edit a post by id
  
 }
 
-function likePost(id,userId,like,usersLiked) {//_____________________________________ Like a post by id 
-const getLike = this.post.likes;
 
-console.log(getLike);
-if (getLike == true ) {
-  alert("Vous avez déjà aimé ce post");// a revoir avec la liste des userLiked
-  return;
+
+
+
+
+function likePost(id,userId,like,usersLiked) {//_____________________________________ Like a post by id 
+
+
+const currentUserId = localStorage.getItem("userId"); //_________________________________________________Only one like per user
+const userLike = usersLiked.find(user => user === currentUserId);
+if (userLike) {
+  alert("C'est gentil mais vous avez déjà liké ce post !");
+  return ;
 }
-  
+
+
+
 
 
 
 if(like=1){ // ______________________________ Strange thing !
-  this.post.likes=this.post.likes+1; // Like S like without S o.O"
+  this.post.likes=this.post.likes+1; 
 }
-// else{
-//   like=1;
-// }
-//like=like+1;
+   
+
   const url = 'http://localhost:8080/api/posts/' + id +"/like";
   fetch(url, {
     method: 'POST',
@@ -242,27 +219,23 @@ if(like=1){ // ______________________________ Strange thing !
     },
     body: JSON.stringify({
       like: like,
-      usersLiked: userName(),
-      id: id
+      usersLiked: usersLiked,
+      id: id,
+      userId: localStorage.getItem("userId")
     })
   })
     .then(response => response.json())
     .then((res) => {
       console.log(res);
-      
-     // this.post.usersLiked.push(userId);/// pas bon !!!!
-     // this.posts = res;
-     
-
-      this.getPosts(); // Trouver une solution pour que ca marche mieux 
+       this.getPosts(); 
       //this.$router.go();
     })
 
-  console.log(id);
-  console.log(userId);
-  console.log(like);
-  console.log(usersLiked);/// non
-  console.log();
+  console.log("ID DU POST: ",id);
+  console.log("USER ID: ",userId);
+  console.log("NEW LIKE: ",like);
+  console.log("USER LIKED: ",usersLiked);/// non
+
 }
 
 
@@ -276,7 +249,7 @@ export default {
         this.post.content = this.content,
         this.post.imageUrl = this.imageUrl,
         this.post.likes = 0,/// s !!!!!!!!!!!!!!!!!!!!!!!!!!!
-        this.post.usersLiked = userName(),
+        this.post.usersLiked = [],
         sendPost(this.post)
    
      
@@ -295,6 +268,7 @@ export default {
     },
     //likePost,
     likePost,
+    
    
     getPosts,
    
@@ -308,7 +282,9 @@ export default {
   components: {
     // Card,
   },
-  
+
+
+
  
  
   mounted() { // mounted() est appelé une fois que le composant est chargé
@@ -343,9 +319,9 @@ export default {
       <p class="text-center mt-3">Quoi de neuf @{{ this.post.name }} ?</p>
       <div class="d-flex bg-light">
 
-        <textarea class="form-control" placeholder="Title" required="" v-model="title"></textarea>
+        <textarea class="form-control" placeholder="Title"  v-model="title"></textarea>
         <!-- <label for="floatingTextarea">Title</label> -->
-        <textarea class="form-control " placeholder="Tape your text" id="floatingTextarea" v-model="content"></textarea>
+        <textarea class="form-control " placeholder="Tape your text" id="floatingTextarea"  v-model="content"></textarea>
         <!-- <label for="floatingTextarea">Comments</label> -->
 
       </div>
@@ -356,13 +332,16 @@ export default {
    
       
 
+
       <!-- <img class="img-fluid" v-if ="fileSelect" :src="imageUrl" alt="image" width="100" height="100"> -->
       <!-- <img class="img-fluid" v-if ="fileSelect" :src="imageUrl" alt="image" width="100" height="100"> -->
       
       
       <!-- <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto" @click="sendPost(this.post,title,content),getPosts(this.post,title,content)">Send</button> -->
       <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto"
-        @click="sendPost(this.post, name, title, content,imageUrl,like,usersLiked), getPosts(this.post, name, title, content,imageUrl,like,usersLiked) ">Send</button>
+        @click="sendPost(this.post, name, title, content, imageUrl, like, usersLiked),
+         getPosts(this.post, name, title, content, imageUrl, like, usersLiked) "  >Send</button>
+
     </div>
     <hr class="mt-4 dropdown-divider" />
   
@@ -385,20 +364,29 @@ export default {
           <div class="d-flex bg-light">
        
            
-      <div class = "like">
-  <div id = "heart" @click=" likePost(post._id,post.userId,post.likes,post.usersLiked)">
+      <div class = "like" >
+        
+      
+  <div  id = "heart" @click=" likePost(post._id,post.userId,post.likes,post.usersLiked)" >
+    
     <div id = "left" class = "segments"></div>
     <div id = "right" class = "segments"></div>
   </div>
   <div id = "like-count">{{ post.likes }}</div>
 </div>
-            <button  id="edit" type="button" class="btn btn-light btn-lg  ms-auto like" @click="editPost(post._id)">Edit</button>
+            <button  id="edit" type="button" class="btn btn-light btn-lg  ms-auto like" @click="editPost(post._id,post.userId)">Edit</button>
+           
+
+           
+           
+
+
 
 
 
 
             <button id="delete" type="button" class="btn btn-danger btn-lg mt-1 ms-auto like"
-              @click="deletePost(post._id)">Delete</button>
+              @click="deletePost(post._id,post.userId)">Delete</button>
           </div>
         </div>
       </div>

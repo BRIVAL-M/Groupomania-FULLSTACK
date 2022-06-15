@@ -12,9 +12,9 @@ const postSchema = mongoose.Schema({
    },
   title: {
     type: String,
-    required: true,
+   // required: true,
      maxlength: 100,
-      minlength: 1,
+     // minlength: 1,
   },
   content: {
     type: String,
