@@ -116,43 +116,100 @@ function getPosts() {//_____________________________________ Get all posts
 function deletePost(id,userId) {//_____________________________________ Delete a post by id 
 
 
+const adminId= "62a9f561c580240eba5b2da3"
+console.log(adminId);
+
+
 
 const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
-if(currentUserId != userId){
-  alert("Ce n'est pas sympa de vouloir effacer un post que vous n'avez pas créé !");
-  return ;
+if (currentUserId === adminId){
+  alert("GOD MODE ACTIVATED");
+  
 }
 
-if (confirm("Voulez-vous vraiment supprimer ce post ?")) { // Confirm the deletion of the post
-  const url = 'http://localhost:8080/api/posts/' + id;
 
+
+if(currentUserId === userId || currentUserId === adminId){
+
+  const url = 'http://localhost:8080/api/posts/' + id;
   fetch(url, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + localStorage.getItem("token") 
+      'Authorization': 'Bearer ' + localStorage.getItem("token")
     },
-})
+  })
     .then(response => response.json())
     .then((res) => {
       console.log(res);
-      
-      console.log("id:",id);
-      this.getPosts();// a voir mais ce n'est pas mal
- 
+      this.getPosts();
     })
+    .catch(error => {
+      if (error.status !== 200) {
+       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+       localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        this.$router.push("/login");
+        //console.log(error);
+      }
+      console.log(error);
+    });
+}
+else{
+  alert("Ce n'est pas sympa de vouloir effacer un post que vous n'avez pas créé !");
+  return ;
 }
 }
+
+
+
+
+// if (confirm("Voulez-vous vraiment supprimer ce post ?")) { // Confirm the deletion of the post
+//   const url = 'http://localhost:8080/api/posts/' + id;
+
+//   fetch(url, {
+//     method: 'DELETE',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Authorization': 'Bearer ' + localStorage.getItem("token") 
+//     },
+// })
+//     .then(response => response.json())
+//     .then((res) => {
+//       console.log(res);
+      
+//       console.log("id:",id);
+//       this.getPosts();// a voir mais ce n'est pas mal
+ 
+//     })
+// }
+// }
 
 //import Card from "./Card.vue"; // pour le moment je ne peux pas binder les infos de l'utilisateur dans le card 
 
 function editPost(id,userId) {//_____________________________________ Edit a post by id 
 
+// const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
+// if(currentUserId != userId){
+//   alert(" Vous souhaitez modifier un post qui n'est pas le votre !");
+//   return ;
+// }
+
+const adminId= "62a9f561c580240eba5b2da3" // A mettre dans un .env si c'est bon !!!!!!!!!!!!!!!!!
+console.log(adminId);
+
+
+
 const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
-if(currentUserId != userId){
-  alert(" Vous souhaitez modifier un post qui n'est pas le votre !");
-  return ;
+if (currentUserId === adminId){
+  alert("GOD MODE ACTIVATED");
+  
 }
+
+
+
+if(currentUserId === userId || currentUserId === adminId){
 
 
 
@@ -184,6 +241,12 @@ if(currentUserId != userId){
     });
  
 }
+else{
+  alert("Vous souhaitez modifier un post qui n'est pas le votre !");
+  return ;
+}
+}
+
 
 
 
