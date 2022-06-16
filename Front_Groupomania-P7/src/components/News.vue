@@ -9,13 +9,24 @@ function logout() {//_____________________________________ Logout user
   this.$router.push("/login");
 }
 
+function dateTime (){
+ const now = new Date();
+  const date = now.getDate();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  
+  return date + "/" + month + "/" + year + " à " + hours + "h" + minutes; // retirer les minutes et les secondes !
+}
+
 function userName() {//_____________________________________ Find the user name from him email
   const email = localStorage.getItem('email');
   const name = email.substring(0, email.lastIndexOf("@"));
   return name;
 }
 
-function sendPost(post, name, title, content,imageUrl,like,usersLiked) { //_________________________________________ Send a post
+function sendPost(post, name, title, content,imageUrl,like,usersLiked,date) { //_________________________________________ Send a post
 
 const url = 'http://localhost:8080/api/posts';
 
@@ -23,11 +34,11 @@ const url = 'http://localhost:8080/api/posts';
   fetch(url, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json',// mauvais content-type ?
       //'accept': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem("token")
     },
-    body: JSON.stringify(post, name, title, content,imageUrl,like,usersLiked)
+    body: JSON.stringify(post, name, title, content,imageUrl,like,usersLiked,date)
 })
     .then(response => response.json())
     .then((res) => {
@@ -60,7 +71,7 @@ function data() { // _____________________________________ Data of user's posts
     posts: [],
     post: {
       userId: '',
-
+      date: dateTime(),
       name: userName(),
       title: '',
       content: '',
@@ -116,20 +127,20 @@ function getPosts() {//_____________________________________ Get all posts
 function deletePost(id,userId) {//_____________________________________ Delete a post by id 
 
 
-const adminId= "62a9f561c580240eba5b2da3"
+const adminId= "62a9f561c580240eba5b2da3"// A mettre dans un .env si c'est bon !!!!!!!!!!!!!!!!!
 console.log(adminId);
 
 
 
-const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
+const currentUserId = localStorage.getItem("userId"); 
 if (currentUserId === adminId){
-  alert("GOD MODE ACTIVATED");
+  alert("★★ GOD MODE ACTIVATED ★★");
   
 }
 
 
 
-if(currentUserId === userId || currentUserId === adminId){
+if(currentUserId === userId || currentUserId === adminId){//____________________________ Check if the user is the owner of the post !
 
   const url = 'http://localhost:8080/api/posts/' + id;
   fetch(url, {
@@ -190,26 +201,22 @@ else{
 
 function editPost(id,userId) {//_____________________________________ Edit a post by id 
 
-// const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
-// if(currentUserId != userId){
-//   alert(" Vous souhaitez modifier un post qui n'est pas le votre !");
-//   return ;
-// }
+
 
 const adminId= "62a9f561c580240eba5b2da3" // A mettre dans un .env si c'est bon !!!!!!!!!!!!!!!!!
 console.log(adminId);
 
 
 
-const currentUserId = localStorage.getItem("userId"); //____________________________ Check if the user is the owner of the post !
+const currentUserId = localStorage.getItem("userId"); 
 if (currentUserId === adminId){
-  alert("GOD MODE ACTIVATED");
+  alert("★★ GOD MODE ACTIVATED ★★");
   
 }
 
 
 
-if(currentUserId === userId || currentUserId === adminId){
+if(currentUserId === userId || currentUserId === adminId ){//____________________________ Check if the user is the owner of the post !
 
 
 
@@ -224,6 +231,7 @@ if(currentUserId === userId || currentUserId === adminId){
     .then(response => response.json())
     .then((res) => {
       console.log(res);
+ 
       this.post = res;
       this.$router.push("/edit/" + id);
     })
@@ -307,6 +315,7 @@ export default {
   methods: {
     sendPost() {
       this.post.userId = localStorage.getItem("userId"),
+      this.post.date = dateTime(),
         this.post.name = userName(),
         this.post.title = this.title,
         this.post.content = this.content,
@@ -331,7 +340,7 @@ export default {
     },
     //likePost,
     likePost,
-    
+    dateTime,
    
     getPosts,
    
@@ -370,7 +379,7 @@ export default {
           <ul class="navbar-nav">
             <li class="nav-item">
               <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
-              <button class="btn btn-secondary btn-lg mt-1 m-1" @click="getPosts(this.post, name, title, content,usersLiked)">All
+              <button class="btn btn-secondary btn-lg mt-1 m-1" @click="getPosts(this.post, name, title, content,usersLiked,date)">All
                 posts</button>
               <button class="btn btn-secondary btn-lg mt-1 m-1" @click="logout()">Logout</button>
             </li>
@@ -399,11 +408,11 @@ export default {
       <!-- <img class="img-fluid" v-if ="fileSelect" :src="imageUrl" alt="image" width="100" height="100"> -->
       <!-- <img class="img-fluid" v-if ="fileSelect" :src="imageUrl" alt="image" width="100" height="100"> -->
       
-      
+     
       <!-- <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto" @click="sendPost(this.post,title,content),getPosts(this.post,title,content)">Send</button> -->
       <button type="button" class="btn btn-danger btn-lg mt-1 ms-auto"
-        @click="sendPost(this.post, name, title, content, imageUrl, like, usersLiked),
-         getPosts(this.post, name, title, content, imageUrl, like, usersLiked) "  >Send</button>
+        @click="sendPost(this.post, name, title, content, imageUrl, like, usersLiked,date),
+         getPosts(this.post, name, title, content, imageUrl, like, usersLiked,date) ">Send</button>
 
     </div>
     <hr class="mt-4 dropdown-divider" />
@@ -415,14 +424,15 @@ export default {
         <div class="card-header">
           <img src="/img_logo/icon.png" class="rounded-circle m-2" alt="Avatar">
 
-          Posté par @{{ post.name }}
+          Posté par @{{ post.name }} &#128172 {{post.date}}
+          
         </div>
-     
+      
         <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top" alt="...">
         <div class="card-body">
           <h5 class="card-title">{{ post.title }}</h5>
           <p class="card-text">{{ post.content }}</p>
-          <p class="card-text"><small class="text-muted">Last updated : </small></p>
+          
 
           <div class="d-flex bg-light">
        

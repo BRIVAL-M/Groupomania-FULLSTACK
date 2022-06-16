@@ -17,9 +17,10 @@ exports.createPost = (req, res, next) => {
 
 
 
-  const { userId, name, title, content,imageUrl,usersLiked } = req.body;
+  const { userId, name, title, content,usersLiked,date,imageUrl } = req.body;
 
   Post.create({//  MODIFIER ICI
+    date,
     userId,
     name,
     title,
@@ -55,6 +56,8 @@ exports.modifyPost = (req, res, next) => {
 
     {
       ...JSON.parse(req.body.post),
+    
+
 
      // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // 
     // imageUrl: req.file.path,

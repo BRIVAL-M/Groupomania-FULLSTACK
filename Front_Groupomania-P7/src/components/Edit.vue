@@ -2,15 +2,6 @@
 
 <script>
 
-function userName() {//_____________________________________ Find the user name from him email
-    const email = localStorage.getItem('email');
-    const name = email.substring(0, email.lastIndexOf("@"));
-    return name;
-}
-
-
-
-
 function getPostById() {
 
     const id = window.location.href.split('/').pop(); // Get the id from the url
@@ -41,7 +32,9 @@ function getPostById() {
     });
 }
 
-function updatePost(post, name, title, content, imageUrl, like, usersLiked) {
+function updatePost(post, title, content, imageUrl) {
+
+
     const id = window.location.href.split('/').pop();
     const url = 'http://localhost:8080/api/posts/' + id;
     fetch(url, {
@@ -51,7 +44,7 @@ function updatePost(post, name, title, content, imageUrl, like, usersLiked) {
             'Authorization': 'Bearer ' + localStorage.getItem("token")
         },
         
-        body: JSON.stringify(post, name, title, content, imageUrl, like, usersLiked)
+        body: JSON.stringify(post,title, content, imageUrl)
     })
         .then(response => response.json())
         .then((res) => {
@@ -62,9 +55,19 @@ function updatePost(post, name, title, content, imageUrl, like, usersLiked) {
         })
         .catch(error => {
             console.log(error);
+            
+        if (error.status !== 200) {
+       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+       localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        this.$router.push("/login");
+        //console.log(error);
+      }
         });
         
 }
+//}
 function rmImg(){
    
    this.imageUrl = ""
@@ -79,14 +82,14 @@ function data() { // _____________________________________ Data of user's posts
     return {
         posts: [],
         post: {
-            userId: '',
+          //  userId: "",
 
-            name: userName(),
+          //  name: userName(),
             title: '',
             content: '',
             imageUrl: '',
-            likes: 0,
-            usersLiked: [],
+           // likes: 0,
+          // usersLiked: [],
         },
 
     }
@@ -103,13 +106,13 @@ export default {
         getPostById,rmImg,
 
         updatePost() {
-            this.post.userId = localStorage.getItem("userId"),
-                this.post.name = userName(),
+         
+                 this.post.userId = this.userId,            
                 this.post.title = this.post.title,
                 this.post.content = this.post.content,
                 this.post.imageUrl = this.imageUrl,
-                this.post.likes = 0,// s !!!!!!!!!!!!!!!!!!!!!!!!!!
-                this.post.usersLiked = [],
+             //  this.post.likes = 0,// s !!!!!!!!!!!!!!!!!!!!!!!!!!
+             //  this.post.usersLiked = [],
                 updatePost(this.post)
         },
         fileSelect(e) {
@@ -181,17 +184,19 @@ export default {
         </div>
         <div class="d-flex  mt-1">
 
-            <label for="file-input" class="btn btn-light  btn-lg mt-1 like" @click="updatePost(this.post, name, title, content, imageUrl, like, usersLiked),getPostById()" >Add Image</label>
+            <label for="file-input" class="btn btn-light  btn-lg mt-1 like">Add Image</label>
             <input id="file-input" type="file" @change="fileSelect" />
 
            
                 
           
             <button class="btn btn-danger btn-lg mt-1 like"
-                @click="rmImg(this.post, imageUrl),updatePost(this.post, name, title, content, imageUrl, like, usersLiked),getPostById()">Delete image</button>
+                @click="rmImg(this.post, imageUrl),updatePost(this.post, title, content, imageUrl),getPostById()">Delete image</button>
                  <button class="btn btn-primary btn-lg mt-1 like"
-                @click="updatePost(this.post, name, title, content, imageUrl, like, usersLiked),getPostById()">Update</button>
-                <router-link to="/news" class="btn btn-light  btn-lg mt-1 like">All posts</router-link>
+                @click="updatePost(this.post,  title, content, imageUrl),getPostById()">Update</button>
+                <router-link to="/news" class="btn btn-light  btn-lg mt-1 like" @click="updatePost(this.post,  title, content, imageUrl)">All posts</router-link>
+       
+                
 
            
         </div>

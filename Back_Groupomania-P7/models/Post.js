@@ -28,6 +28,8 @@ const postSchema = mongoose.Schema({
   likes: { type: Number, required: true },
  
  usersLiked: { type: [String], required: true },
+
+ date: { type: String, required: true}
  
 });
 
