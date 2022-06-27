@@ -1,56 +1,56 @@
  <script>
-import "bootstrap/dist/css/bootstrap.min.css";
-import "/App.css";
-
-function signUser(email, password) { //_____________________________ Signup user
-
-    const url = 'http://localhost:8080/api/auth/signup';
-    console.log(url);
-    console.log({ email, password });//---------------------------------A delete !
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    })
-        .then(response => response.json())/// Il serait bien de binder les messages d'alert sous les inputs
-        .then((res) => {
-
-            if (res.error) {//_____________________________________ Les erreurs de user.js dans le back
-                console.log(res.error);
-                alert(res.error.message);
-                return;
-            }
-            if (res.errors) {//______________________________________ Les erreurs de validator.js dans le back
-                const findMsg = res.errors.find(function (element) {
-                    return element.msg
-                });
-                if (findMsg) {
-                    alert(findMsg.msg);
-                    return;
-                }
-            }
-            else {
-
-                this.$router.push("/login");
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-}
-
-export default {
-    name: "Signup",
-    methods: {
-        signUser,
-    }
-}
-
-
-
-</script>
+ import "bootstrap/dist/css/bootstrap.min.css";
+ import "/App.css";
+ 
+ function signUser(email, password) { //_____________________________ Signup user
+ 
+     const url = 'http://localhost:8080/api/auth/signup';
+     console.log(url);
+     console.log({ email, password });//---------------------------------A delete !
+     fetch(url, {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({ email, password })
+     })
+         .then(response => response.json())/// Il serait bien de binder les messages d'alert sous les inputs
+         .then((res) => {
+ 
+             if (res.error) {//_____________________________________ Les erreurs de user.js dans le back
+                 console.log(res.error);
+                 alert(res.error.message);
+                 return;
+             }
+             if (res.errors) {//______________________________________ Les erreurs de validator.js dans le back
+                 const findMsg = res.errors.find(function (element) {
+                     return element.msg
+                 });
+                 if (findMsg) {
+                     alert(findMsg.msg);
+                     return;
+                 }
+             }
+             else {
+ 
+                 this.$router.push("/login");
+             }
+         })
+         .catch(error => {
+             console.log(error);
+         });
+ }
+ 
+ export default {
+     name: "Signup",
+     methods: {
+         signUser,
+     }
+ }
+ 
+ 
+ 
+ </script>
 
 <template>
 
@@ -97,7 +97,9 @@ export default {
                                             class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm"
                                             @click.prevent="signUser(email, password)">Inscription</button>
 
-                                            <router-link to="/login" class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm">J'ai déjà un compte !</router-link>
+                                        <router-link to="/login"
+                                            class="btn btn-danger btn-block text-uppercase mb-2 rounded-pill shadow-sm">
+                                            J'ai déjà un compte !</router-link>
                                     </div>
 
                                 </form>

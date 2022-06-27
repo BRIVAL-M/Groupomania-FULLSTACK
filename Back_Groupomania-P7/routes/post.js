@@ -10,17 +10,18 @@ const multer = require('../middleware/multer-config');
 
 
 
-router.post('/', auth, multer, postCtrl.createPost); 
 
-router.put('/:id', auth,multer, postCtrl.modifyPost); 
+router.post('/',auth,multer.single("image"),postCtrl.createPost); // Create a new post
 
-router.delete('/:id', auth, postCtrl.deletePost);
+router.put('/:id', auth,multer.single("image"), postCtrl.modifyPost); // Upload the image and modify the post
 
-router.get('/:id', auth, postCtrl.getOnePost); 
+router.delete('/:id', auth, postCtrl.deletePost); // Delete the post
 
-router.get('/', auth, postCtrl.getAllPosts); 
+router.get('/:id', auth, postCtrl.getOnePost); // Get the post from the id
 
-router.post("/:id/like", auth, postCtrl.likeAndDislike)
+router.get('/', auth, postCtrl.getAllPosts); // Get all posts
+
+router.post("/:id/like", auth, postCtrl.likeAndDislike) // Add a like to the post
 
 
 

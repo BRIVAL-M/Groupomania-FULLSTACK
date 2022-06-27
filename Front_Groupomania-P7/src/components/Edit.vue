@@ -1,78 +1,85 @@
 
-
 <script>
 
 function getPostById() {
 
-    const id = window.location.href.split('/').pop(); // Get the id from the url
+const id = window.location.href.split('/').pop(); // Get the id from the url
 
-
-    const url = 'http://localhost:8080/api/posts/' + id;
+const url = 'http://localhost:8080/api/posts/' + id;
     fetch(url, {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + localStorage.getItem("token")
+           // 'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': 'Bearer ' + localStorage.getItem("token"),
+           // 'Accept': 'multipart/form-data'
         },
     })
         .then(response => response.json())
         .then((res) => {
             console.log(res);
             this.post = res;
-        })
+         })
       .catch(error => {
-        if (error.status !== 200) {
-       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
-       localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("email");
-        this.$router.push("/login");
-        //console.log(error);
-      }
-    });
+        console.log(error);
+      });
 }
 
-function updatePost(post, title, content, imageUrl) {
 
 
-    const id = window.location.href.split('/').pop();
+function updatePost(post) {
+
+const formData = new FormData();
+ if(post.imageUrl){
+  formData.append('image', post.imageUrl);
+ }
+//formData.append('userId', post.userId);
+  formData.append('title', post.title);
+  formData.append('content', post.content);
+
+
+
+
+const id = window.location.href.split('/').pop();
+
     const url = 'http://localhost:8080/api/posts/' + id;
     fetch(url, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json',
+           // 'Content-Type': 'multipart/form-data',
             'Authorization': 'Bearer ' + localStorage.getItem("token")
         },
         
-        body: JSON.stringify(post,title, content, imageUrl)
+   //    body: JSON.stringify(post,title, content, imageUrl)
+        body: formData
     })
         .then(response => response.json())
         .then((res) => {
             console.log(res);
-           // this.post = res;
-            
-
-        })
+             location.reload();/// en attendant de voir comment faire pour afficher la nouvelle image sans recharger la page
+             })
         .catch(error => {
             console.log(error);
             
-        if (error.status !== 200) {
-       alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
-       localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("email");
-        this.$router.push("/login");
-        //console.log(error);
-      }
-        });
-        
-}
-//}
-function rmImg(){
-   
-   this.imageUrl = ""
+    //     if (error.status !== 200) {
+    //    alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+    //    localStorage.removeItem("token");
+    //     localStorage.removeItem("userId");
+    //     localStorage.removeItem("email");
+    //     this.$router.push("/login");
+    //     //console.log(error);
+    //     }
+         });
+    }
 
-}
+    
+
+
+// function rmImg(){
+   
+
+// }
+
 
 
 
@@ -83,16 +90,14 @@ function data() { // _____________________________________ Data of user's posts
         posts: [],
         post: {
           //  userId: "",
-
-          //  name: userName(),
+//  name: userName(),
             title: '',
             content: '',
             imageUrl: '',
            // likes: 0,
           // usersLiked: [],
         },
-
-    }
+ }
 }
 
 
@@ -103,7 +108,8 @@ export default {
     name: "Edit", data,
 
     methods: {
-        getPostById,rmImg,
+        getPostById,
+        //rmImg,
 
         updatePost() {
          
@@ -111,23 +117,24 @@ export default {
                 this.post.title = this.post.title,
                 this.post.content = this.post.content,
                 this.post.imageUrl = this.imageUrl,
-             //  this.post.likes = 0,// s !!!!!!!!!!!!!!!!!!!!!!!!!!
+             //  this.post.likes = 0,
              //  this.post.usersLiked = [],
                 updatePost(this.post)
+              
+                
         },
         fileSelect(e) {
-            console.log(e.target.files[0]);
-            this.imageUrl = URL.createObjectURL(e.target.files[0]);
-
-
-            this.imageName = e.target.files[0].name; // a revoir pour afficher   le nom de l'image peut etre
-            console.log(this.imageName);
-            console.log(this.imageUrl);
+            console.log("e: ",e.target.files[0]);
+      this.imageUrl = e.target.files[0];
+           
         },
     },
     mounted() {
+
         this.getPostById();
-    },
+
+    
+}
 }
 
 </script>
@@ -162,6 +169,7 @@ export default {
             </div>
 
             <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top" alt="...">
+            
             <div class="card-body">
                 <h5 class="card-title">{{ post.title }}</h5>
                 
@@ -184,17 +192,16 @@ export default {
         </div>
         <div class="d-flex  mt-1">
 
-            <label for="file-input" class="btn btn-light  btn-lg mt-1 like">Add Image</label>
-            <input id="file-input" type="file" @change="fileSelect" />
+            <label for="file-input" class="btn btn-light  btn-lg mt-1 ">Add Image</label>
+            <input id="file-input" type="file" @change="fileSelect"/>
 
            
                 
           
-            <button class="btn btn-danger btn-lg mt-1 like"
-                @click="rmImg(this.post, imageUrl),updatePost(this.post, title, content, imageUrl),getPostById()">Delete image</button>
-                 <button class="btn btn-primary btn-lg mt-1 like"
-                @click="updatePost(this.post,  title, content, imageUrl),getPostById()">Update</button>
-                <router-link to="/news" class="btn btn-light  btn-lg mt-1 like" @click="updatePost(this.post,  title, content, imageUrl)">All posts</router-link>
+           
+                  <button class="btn btn-primary btn-lg mt-1 "
+                @click="updatePost()">Update</button> 
+                <router-link to="/news" class="btn btn-light  btn-lg mt-1 " >All posts</router-link>
        
                 
 

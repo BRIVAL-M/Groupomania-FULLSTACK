@@ -1,66 +1,63 @@
-const Post = require('../models/Post'); // Import sauce model
-const fs = require('fs');// Fs is required to delete the image from the folder when we delete the sauce
+const Post = require('../models/Post');
+const fs = require('fs');
 
 
-exports.createPost = (req, res, next) => { 
-  // get url after blob/ in the imageUrl
- // const blob = req.url.split('/')[2]
+
+
+
+
+
+
+
+
+
+  
+
+
+exports.createPost =async (req, res, next) => { 
+ 
  
 
-//const imageUrl =  `${req.protocol}://${req.get('host')}/images/${req.file.filename}`;
-//const imageUrl =  `${req.protocol}://${req.get('host')}/images/${blob}`;
-
-
-//const imageUrl ="blob:http://localhost:3000/ed0adea1-e0f2-470f-8c09-c1a729ad5c3d"
-
-
-
-
-
-  const { userId, name, title, content,usersLiked,date,imageUrl } = req.body;
-
-  Post.create({//  MODIFIER ICI
-    date,
-    userId,
-    name,
-    title,
-    content,
-   imageUrl,
-    likes: 0, // S ou pas s
-     usersLiked // pas sur !!!!!!!!!!!!!
-   
+const newPost = new Post({
+    userId:req.body.userId,
+    name: req.body.name,
+    date: req.body.date,
+    title:req.body.title,
+    content:req.body.content,
+    imageUrl: req.file !== undefined ? `http://localhost:8080/images/${req.file.filename}`:'',
+   // picture: req.file !== undefined ? `http://localhost:8080/images/posts/${req.file.filename}`:'',
+    likes:0,// a changer!
+    usersLiked:[],// a changer
   })
 
-    .then(() => {
-      // enregistrer l'image dans le dossier images
-      
-    
-console.log(req.body)
-      
+ try{
+  const post = await newPost.save();
+  return res.status(201).json(post)
+ }catch(error){
+  return res.status(400).send(error)
+ }
 
-      res.status(201).json({ message: 'Post créé !' });
-    })
-    .catch(error => {
-      // fs.unlink(req.file.path, () => { 
-      //   res.status(500).json({ error });
-      // });
-      res.status(500).json({ error, message: 'Erreur lors de la création du post' });
-     
-      console.log(error)
-    });
+
 }
+
 
 exports.modifyPost = (req, res, next) => { 
 
   const postObject = req.file ? 
 
     {
-      ...JSON.parse(req.body.post),
+     // ...JSON.parse(req.body.post),
+      title: req.body.title,
+      content: req.body.content,
+      imageUrl: req.file !== undefined ? `http://localhost:8080/images/${req.file.filename}`:'',
+    //  imageUrl: `http://localhost:8080/images/${req.file.filename}`,
+
     
 
-
-     // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // 
+    //  imageUrl: req.file !== undefined ? `http://localhost:8080/images/${req.file.filename}`:'',
+    //  imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // 
     // imageUrl: req.file.path,
+    
 
     } : { ...req.body }; 
 
@@ -69,46 +66,30 @@ exports.modifyPost = (req, res, next) => {
     .then(post => {
 
       if (req.file) {
-        // const filename = post.imageUrl.split("/images/")[1]
-        // fs.unlink(`images/${filename}`, () => {
-        //   res.status(200).json({ message: 'Post modifié !' });
-        // });
+        const filename = post.imageUrl.split("/images/")[1]/// pas sur
+        fs.unlink(`images/${filename}`, () => {
+          res.status(200).json({ message: 'Post modifié !' });
+        });
       } else {
         res.status(200).json({ message: 'Post modifié !' });
       }
     })
     .catch(error => res.status(500).json({ error }))
 }
-
-
-exports.deletePost = (req, res, next) => { 
-
-  ///////////////////////////////////////////////////////
-
-
-  //////////////////////////////////////////////////////
-
-  Post.findByIdAndDelete(req.params.id)
-    .then(() => {
-      ////////////////////////////////////////////
-
- 
-  ////////////////////////////////////////////////////    
-      res.status(200).json({ message: 'Post supprimé !' });
-      console.log(req.params.id)
-   
+exports.deletePost = (req, res, next) => {
+  Post.findOne({ _id: req.params.id })
+    .then((post) => {
+      const filename = post.imageUrl.split("/images/")[1]
+      fs.unlink(`images/${filename}`, () => {
+        Post.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: 'Post supprimé !' }))
+          .catch((error) => res.status(400).json({ error }))
+      })
     })
-    .then(post => {
-      
-      // const filename = post.imageUrl.split("/images/")[1]
-      // fs.unlink(`images/${filename}`, () => {
-      //   res.status(200).json({ message: "Post supprimé" })
-      // })
-    })
-    .catch(error => res.status(500).json({ error }))
+    .catch((error) => res.status(404).json({ error }))
 }
 
-exports.getOnePost = (req, res, next) => { // ------------------------------------------------------a delete
+exports.getOnePost = (req, res, next) => {
   Post.findOne({ _id: req.params.id })
     .then(post => res.status(200).json(post))
     .catch(error => res.status(404).json({ error }));
