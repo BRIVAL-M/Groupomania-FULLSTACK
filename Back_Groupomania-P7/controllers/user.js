@@ -10,7 +10,7 @@ exports.signup = (req, res, next) => {
   bcrypt.hash(req.body.password, 10) // Hash the password 
     .then(hash => {
       const user = new User({
-      
+
         email: req.body.email,
         password: hash
       });
@@ -39,18 +39,25 @@ exports.login = (req, res, next) => { // Login the user and create a token for h
           res.status(200).json({
 
             userId: user._id,
+            isAdmin: user.isAdmin,// new add
+
+
+
+
             token: jwt.sign( // Create a token for the user
-              { userId: user._id },
+              { userId: user._id },//, isAdmin: user.isAdmin
               process.env.JWT_PWD,
               { expiresIn: '24h' }
             )
+
           });
+          console.log("IsAdmin = ", user.isAdmin);
         })
         .catch(error => res.status(500).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
 };
 
-//User.deleteMany({}).then(() => console.log("Users deleted !")); // delete all users in the database
+//User.deleteMany({}).then(() => console.log("Users deleted !")); // Delete all users in the database
 
 

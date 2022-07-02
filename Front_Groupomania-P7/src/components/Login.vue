@@ -34,9 +34,11 @@ function logUser(email, password) {
         }
       }
       else {
+        
         localStorage.setItem('token', res.token);
         localStorage.setItem('userId', res.userId);
         localStorage.setItem('email', email);
+        
         this.$router.push("/news");
       }
       console.log(res);
@@ -64,9 +66,11 @@ function data() {
     email: "",
     password: "",
     error: this.error,
+    //isAdmin: "",
   }
 
 }
+
 </script>
 <template>
 

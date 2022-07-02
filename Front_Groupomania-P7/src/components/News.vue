@@ -1,6 +1,7 @@
 <script>
 
-function logout() {//_____________________________________ Logout user
+
+function logout() {//_________________________ Logout user
 
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
@@ -8,31 +9,42 @@ function logout() {//_____________________________________ Logout user
   this.$router.push("/login");
 }
 
-function dateTime() {// _____________________________________ Date & hours of the user send him post
+function dateTime() {// _________________________Date & hours of the user send him post
 
   const now = new Date();
   const date = now.getDate();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  const hours = now.getHours();
-  const minutes = now.getMinutes() / 1;
+  // const hours = now.getHours();
+  // const minutes = now.getMinutes() / 1;
 
-  return date + "/" + month + "/" + year + " à " + hours + "h" + minutes;
+  return date + "/" + month + "/" + year;//+ " à " + hours + "h" + minutes;
 }
 
-function userName() {//_____________________________________ Find the user name from him email
+function userName() {//____________________________Find the user name from him email
   const email = localStorage.getItem('email');
   const name = email.substring(0, email.lastIndexOf("@"));
   return name;
 }
 
-function sendPost(post) { //_________________________________________ Send a post
+function sendPost(post) { //___________________________ Send a post
+
+
+
+  // if(post.title.length < 0 && post.content.length < 0) {// la seule chose qui fonctionne (presque)
+  //  return;
+  //  }
+
 
   const url = 'http://localhost:8080/api/posts';
   const formData = new FormData();
   if (post.imageUrl) {
     formData.append('image', post.imageUrl);
   }
+
+
+
+
   formData.append('userId', localStorage.getItem('userId'));
   formData.append('name', post.name);
   formData.append('date', post.date);
@@ -49,6 +61,7 @@ function sendPost(post) { //_________________________________________ Send a pos
   })
     .then(response => response.json())
     .then((res) => {
+
 
       console.log(res);
       location.reload(); // En attendant..... 
@@ -71,7 +84,7 @@ function sendPost(post) { //_________________________________________ Send a pos
     })
 }
 
-function data() { // _____________________________________ Data of user's posts
+function data() { // ______________________________________ Data of user's posts
 
   return {
     posts: [],
@@ -84,11 +97,16 @@ function data() { // _____________________________________ Data of user's posts
       imageUrl: '',
       likes: 0,
       usersLiked: [],
+
+
+
     },
   }
 }
 
-function getPosts() {//_____________________________________ Get all posts 
+function getPosts() {//_________________________________________ Get all posts 
+
+
 
   const url = 'http://localhost:8080/api/posts';
   fetch(url, {
@@ -105,7 +123,7 @@ function getPosts() {//_____________________________________ Get all posts
     .then(response => response.json())
     .then((res) => {
       this.posts = res.reverse();
-      console.log(res);
+
     })
     .catch(error => {
       if (error.status !== 200) {
@@ -120,19 +138,13 @@ function getPosts() {//_____________________________________ Get all posts
 }
 
 
-function deletePost(id, userId) {//_____________________________________ Delete a post by id 
 
-
-  const adminId = "62a9f561c580240eba5b2da3"// A mettre dans un .env si c'est bon !!!!!!!!!!!!!!!!!
-  console.log(adminId);
-  //const userId = localStorage.getItem('userId');
+function deletePost(id, userId) {//___________________________________ Delete a post if this user is the owner of the post
 
   const currentUserId = localStorage.getItem("userId");
-  if (currentUserId === adminId) {
-    alert("★★ GOD MODE ACTIVATED ★★");
-  }
 
-  if (currentUserId === userId || currentUserId === adminId) {//____________________________ Check if the user is the owner of the post !
+  if (currentUserId === userId) {
+
 
     const url = 'http://localhost:8080/api/posts/' + id;
     fetch(url, {
@@ -141,14 +153,16 @@ function deletePost(id, userId) {//_____________________________________ Delete 
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + localStorage.getItem("token")
       },
-      // body: formData
+
       body: JSON.stringify({ id: id })
     })
       .then(response => response.json())
       .then((res) => {
+
         console.log(res);
         this.getPosts();
       })
+
       .catch(error => {
         if (error.status !== 200) {
           alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
@@ -158,8 +172,7 @@ function deletePost(id, userId) {//_____________________________________ Delete 
           this.$router.push("/login");
           //console.log(error);
         }
-        console.log(error);
-      });
+      })
   }
   else {
     alert("Ce n'est pas sympa de vouloir effacer un post que vous n'avez pas créé !");
@@ -172,26 +185,29 @@ function deletePost(id, userId) {//_____________________________________ Delete 
 
 
 
-//import Card from "./Card.vue"; // pour le moment je ne peux pas binder les infos de l'utilisateur dans le card 
+
+
+//import Card from "./Card.vue"; // Pour le moment je ne peux pas binder les infos de l'utilisateur dans le card 
 
 function editPost(id, userId) {//_____________________________________ Edit a post by id 
 
 
 
-  const adminId = "62a9f561c580240eba5b2da3" // A mettre dans un .env si c'est bon !!!!!!!!!!!!!!!!!
-  console.log(adminId);
+  // const adminId = "62a9f561c580240eba5b2da3" //
+  // console.log(adminId);
 
 
 
   const currentUserId = localStorage.getItem("userId");
-  if (currentUserId === adminId) {
-    alert("★★ GOD MODE ACTIVATED ★★");
+  // if (currentUserId === adminId) {
+  //   alert("★★ GOD MODE ACTIVATED ★★");
 
-  }
+  // }
 
 
 
-  if (currentUserId === userId || currentUserId === adminId) {//____________________________ Check if the user is the owner of the post !
+
+  if (currentUserId === userId) {//|| currentUserId === adminId//____________________________ Check if the user is the owner of the post !
 
 
 
@@ -212,6 +228,7 @@ function editPost(id, userId) {//_____________________________________ Edit a po
         this.post = res;
         this.$router.push("/edit/" + id);
       })
+
 
 
       .catch(error => {
@@ -280,10 +297,24 @@ function likePost(id, userId, like, usersLiked) {//_____________________________
 }
 
 
+
 export default {
   name: "News", data,
+
+
+
+
+
   methods: {
+    //   sendPost() {
+    // if (this.title === '' || this.content === '' ) {
+    //   alert('Veuillez remplir tous les champs.')
+    //   return;
+    // }
+    //   },
     sendPost() {
+      // if(this.post.title !=="" || this.post.content !=="") {
+
       this.post.userId = localStorage.getItem("userId"),
         this.post.date = dateTime(),
         this.post.name = userName(),
@@ -292,36 +323,52 @@ export default {
         this.post.imageUrl = this.imageUrl,
         this.post.likes = 0,
         this.post.usersLiked = [],
+
         sendPost(this.post)
+      // }
+      // else{
+      //   alert("Veuillez remplir tous les champs !");
+      //   return;
+
+      // }
+
     },
 
     fileSelect(e) {//_______________________________ Select the image to upload
       console.log("e: ", e.target.files[0]);
       this.imageUrl = e.target.files[0];
-    },
 
+    },
     likePost,
     dateTime,
     getPosts,
     logout,
     deletePost,
-    editPost
+    editPost,
+
+
+
   },
+
+
   components: {
     // Card,
   },
   mounted() { // mounted() est appelé une fois que le composant est chargé
     this.getPosts()
   }
+
 }
 
 </script>
 <template>
-  <div class="container-sm">
+  <div class="container-sm ">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <p class="navbar-brand">Groupomania</p>
+    <nav class=" navbar navbar-expand-lg navbar-light bg-light mt-3">
+
+
+      <div class="container-fluid bg-light">
+        <h1 class="navbar-brand">Groupomania </h1>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -330,32 +377,48 @@ export default {
           <ul class="navbar-nav">
             <li class="nav-item">
               <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
-              <button class="btn btn-secondary btn-lg mt-1 m-1"
+              <button class="btn  like btn-lg mt-1 m-1 m-lg-3 "
                 @click="getPosts(this.post, name, title, imageUrl, content, usersLiked, date)">All
                 posts</button>
-              <button class="btn btn-secondary btn-lg mt-1 m-1" @click="logout()">Logout</button>
+              <button class="btn  like btn-lg mt-1 m-1 " @click="logout()">Logout</button>
             </li>
           </ul>
         </div>
       </div>
     </nav>
     <div class="form-floating">
-      <p class="text-center mt-3">Quoi de neuf @{{ this.post.name }} ?</p>
+      <h3 class="navbar-brand text-center m-3">Quoi de neuf {{ this.post.name }} ?</h3>
       <div class="d-flex bg-light">
 
-        <textarea class="form-control" placeholder="Title" v-model="title"></textarea>
-        <!-- <label for="floatingTextarea">Title</label> -->
-        <textarea class="form-control " placeholder="Tape your text" id="floatingTextarea" v-model="content"></textarea>
-        <!-- <label for="floatingTextarea">Comments</label> -->
+        <textarea class="form-control m-3" placeholder="Title" v-model="title" type="text"></textarea>
+
+        <textarea class="form-control m-3" placeholder="Tape your text" id="floatingTextarea" v-model="content"
+          type="text"></textarea>
+
+
 
       </div>
     </div>
-    <div class="d-flex  mt-1">
-      <label for="file-input" class="btn btn-light  btn-lg mt-1">Add Image</label>
+    <!-- <label for="file-input" class="btn  btn-lg  ms-auto like m-3">Ajout d'image</label>
       <input id="file-input" type="file" @change="fileSelect" />
 
-      <button type="submit" class="btn btn-danger btn-lg mt-1 ms-auto" @click="sendPost(this.post),
+      <button type="submit" class="btn  btn-lg  ms-auto like m-3"  @click="sendPost(this.post,title,content),
+      getPosts()">Send</button> -->
+    <div class="d-flex  mt-1">
+      <label for="file-input" class=" btn-light customBtn btn-lg mt-1">Add image</label>
+      <input id="file-input" type="file" @change="fileSelect" />
+
+
+      <button type="submit" class="btn customBtn btn-light btn-lg mt-1 ms-auto" @click="sendPost(this.post, title, content),
       getPosts()">Send</button>
+
+      <!--_____________________________________________________________________________________________________________________-->
+
+
+      <!--_____________________________________________________________________________________________________________________-->
+
+
+
 
     </div>
     <hr class="mt-4 dropdown-divider" />
@@ -364,15 +427,18 @@ export default {
     <li v-for="post in posts">
 
       <div class="card mb-3 m-auto">
-        <div class="card-header">
-          <img src="/img_logo/icon.png" class="rounded-circle m-2" alt="Avatar">
+        <div class="card-header mb-3">
+          <img src="/img_logo/icon.png" class="rounded-circle m-2" alt="logo de groupomania">
 
-          Posté par @{{ post.name }} &#128172 {{ post.date }}
+          {{ post.name }} &#128172 {{ post.date }}
 
         </div>
 
-        <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top" alt="...">
+        <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top" alt="image postée par un utilisateur">
+        <hr class="mt-3 dropdown-divider" />
+
         <div class="card-body">
+
           <h5 class="card-title">{{ post.title }}</h5>
           <p class="card-text">{{ post.content }}</p>
 
@@ -390,20 +456,12 @@ export default {
               </div>
               <div id="like-count">{{ post.likes }}</div>
             </div>
-            <button id="edit" type="button" class="btn btn-light btn-lg  ms-auto like"
+            <button id="edit" type="button" class="btn  btn-lg  ms-auto like"
               @click="editPost(post._id, post.userId)">Edit</button>
-
-
-
-
-
-
-
-
-
-
-            <button id="delete" type="button" class="btn btn-danger btn-lg mt-1 ms-auto like"
+            <button id="delete" type="button" class="btn btn-lg  ms-auto like"
               @click="deletePost(post._id, post.userId)">Delete</button>
+
+            <!-- <button v-if="title" type="button" class="btn btn-lg  ms-auto like">test</button> -->
 
           </div>
         </div>
@@ -413,9 +471,66 @@ export default {
 </template>
 
 
-<style>
+<style >
+.card {
+
+  box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.42);
+  animation: cardPostAnim 2s ease 0s 1 normal forwards;
+}
+
+@keyframes cardPostAnim {
+  0% {
+
+    animation-timing-function: ease-in;
+    opacity: 1;
+    transform: translateY(-45px);
+  }
+
+  24% {
+    opacity: 1;
+  }
+
+  40% {
+    animation-timing-function: ease-in;
+    transform: translateY(-24px);
+  }
+
+  65% {
+    animation-timing-function: ease-in;
+    transform: translateY(-12px);
+  }
+
+  82% {
+    animation-timing-function: ease-in;
+    transform: translateY(-6px);
+  }
+
+  93% {
+    animation-timing-function: ease-in;
+    transform: translateY(-4px);
+  }
+
+  25%,
+  55%,
+  75%,
+  87% {
+    animation-timing-function: ease-out;
+    transform: translateY(0px);
+  }
+
+  100% {
+    animation-timing-function: ease-out;
+    opacity: 1;
+    transform: translateY(0px);
+  }
+}
+
 input {
   display: none;
+}
+
+textarea {
+  resize: none !important;
 }
 
 p {
@@ -435,33 +550,61 @@ body {
 .card-header img {
   width: 60px;
   height: 60px;
+  border: solid 1px #FFD7D7;
+  box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.42);
 }
+
+/* .card {
+  width:50%;
+} */
 
 img {
   max-height: 30rem;
-  object-fit: cover;
-
+  object-fit: contain;
 }
 
+/* .card-img-top{
+  background-color: #FD2D01;
+ } */
+
+
+
 .like {
-  height: 5rem;
+  height: 3rem;
   width: fit-content;
   box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   border-radius: 5px;
   padding: 5px;
+  transition: all 0.5s ease !important;
+}
 
+.like:hover {
+  background-color: #FFD7D7 !important;
+  transform: scale(1.1);
+}
 
+.customBtn {
+  height: 3rem;
+  width: fit-content;
+  box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  padding: 5px;
+  transition: all 0.5s ease !important;
+}
+
+.customBtn:hover {
+  transform: scale(1.1);
 }
 
 .segments {
   height: 30px;
   width: 20px;
   border-radius: 100px 100px 0px 0px;
-  background-color: #f47b7b;
-
-
+  background-color: #FD2D01
 }
 
 
