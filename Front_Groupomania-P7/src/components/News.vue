@@ -6,6 +6,7 @@ function logout() {//_________________________ Logout user
   localStorage.removeItem("token");
   localStorage.removeItem("userId");
   localStorage.removeItem("email");
+  localStorage.removeItem("role");
   this.$router.push("/login");
 }
 
@@ -29,14 +30,7 @@ function userName() {//____________________________Find the user name from him e
 
 function sendPost(post) { //___________________________ Send a post
 
-
-
-  // if(post.title.length < 0 && post.content.length < 0) {// la seule chose qui fonctionne (presque)
-  //  return;
-  //  }
-
-
-  const url = 'http://localhost:8080/api/posts';
+   const url = 'http://localhost:8080/api/posts';
   const formData = new FormData();
   if (post.imageUrl) {
     formData.append('image', post.imageUrl);
@@ -52,6 +46,7 @@ function sendPost(post) { //___________________________ Send a post
   formData.append('content', post.content);
   formData.append('likes', post.likes);
   formData.append('usersLiked', post.usersLiked);
+  
 
 
   fetch(url, {
@@ -88,6 +83,9 @@ function data() { // ______________________________________ Data of user's posts
 
   return {
     posts: [],
+    userId:"",
+    title: '',
+    content: '',
     post: {
       userId: '',
       date: dateTime(),
@@ -97,6 +95,10 @@ function data() { // ______________________________________ Data of user's posts
       imageUrl: '',
       likes: 0,
       usersLiked: [],
+
+
+
+    
 
 
 
@@ -122,6 +124,7 @@ function getPosts() {//_________________________________________ Get all posts
   })
     .then(response => response.json())
     .then((res) => {
+      
       this.posts = res.reverse();
 
     })
@@ -139,11 +142,9 @@ function getPosts() {//_________________________________________ Get all posts
 
 
 
+
+
 function deletePost(id, userId) {//___________________________________ Delete a post if this user is the owner of the post
-
-  const currentUserId = localStorage.getItem("userId");
-
-  if (currentUserId === userId) {
 
 
     const url = 'http://localhost:8080/api/posts/' + id;
@@ -158,6 +159,7 @@ function deletePost(id, userId) {//___________________________________ Delete a 
     })
       .then(response => response.json())
       .then((res) => {
+       
 
         console.log(res);
         this.getPosts();
@@ -170,15 +172,13 @@ function deletePost(id, userId) {//___________________________________ Delete a 
           localStorage.removeItem("userId");
           localStorage.removeItem("email");
           this.$router.push("/login");
-          //console.log(error);
+          console.log(error);
         }
+         
+        
       })
   }
-  else {
-    alert("Ce n'est pas sympa de vouloir effacer un post que vous n'avez pas créé !");
-    return;
-  }
-}
+
 
 
 
@@ -189,31 +189,11 @@ function deletePost(id, userId) {//___________________________________ Delete a 
 
 //import Card from "./Card.vue"; // Pour le moment je ne peux pas binder les infos de l'utilisateur dans le card 
 
-function editPost(id, userId) {//_____________________________________ Edit a post by id 
+
+function editPost(id) {//_____________________________________ Edit a post by id 
 
 
-
-  // const adminId = "62a9f561c580240eba5b2da3" //
-  // console.log(adminId);
-
-
-
-  const currentUserId = localStorage.getItem("userId");
-  // if (currentUserId === adminId) {
-  //   alert("★★ GOD MODE ACTIVATED ★★");
-
-  // }
-
-
-
-
-  if (currentUserId === userId) {//|| currentUserId === adminId//____________________________ Check if the user is the owner of the post !
-
-
-
-
-
-    const url = 'http://localhost:8080/api/posts/' + id;
+const url = 'http://localhost:8080/api/posts/' + id;
     fetch(url, {
       method: 'GET',
       headers: {
@@ -222,32 +202,29 @@ function editPost(id, userId) {//_____________________________________ Edit a po
       },
     })
       .then(response => response.json())
+      
+
       .then((res) => {
         console.log(res);
-
         this.post = res;
+       
         this.$router.push("/edit/" + id);
       })
 
-
-
       .catch(error => {
+       
         if (error.status !== 200) {
           alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");//_____ Get  if the token is valid !
           localStorage.removeItem("token");
           localStorage.removeItem("userId");
           localStorage.removeItem("email");
           this.$router.push("/login");
-          //console.log(error);
+          console.log(error);
         }
-      });
+    });
 
   }
-  else {
-    alert("Vous souhaitez modifier un post qui n'est pas le votre !");
-    return;
-  }
-}
+
 
 
 
@@ -286,7 +263,7 @@ function likePost(id, userId, like, usersLiked) {//_____________________________
     .then((res) => {
       console.log(res);
       this.getPosts();
-      //this.$router.go();
+      
     })
 
   console.log("ID DU POST: ", id);
@@ -313,7 +290,7 @@ export default {
     // }
     //   },
     sendPost() {
-      // if(this.post.title !=="" || this.post.content !=="") {
+      
 
       this.post.userId = localStorage.getItem("userId"),
         this.post.date = dateTime(),
@@ -325,12 +302,7 @@ export default {
         this.post.usersLiked = [],
 
         sendPost(this.post)
-      // }
-      // else{
-      //   alert("Veuillez remplir tous les champs !");
-      //   return;
-
-      // }
+     
 
     },
 
@@ -348,6 +320,7 @@ export default {
 
 
 
+
   },
 
 
@@ -356,9 +329,14 @@ export default {
   },
   mounted() { // mounted() est appelé une fois que le composant est chargé
     this.getPosts()
+  
+      this.userId = localStorage.getItem("userId");
+      this.role = localStorage.getItem("role");
+
+    }
   }
 
-}
+
 
 </script>
 <template>
@@ -405,11 +383,11 @@ export default {
       <button type="submit" class="btn  btn-lg  ms-auto like m-3"  @click="sendPost(this.post,title,content),
       getPosts()">Send</button> -->
     <div class="d-flex  mt-1">
-      <label for="file-input" class=" btn-light customBtn btn-lg mt-1">Add image</label>
+      <label v-if="title!=''&& content!=''" for="file-input" class=" btn-light customBtn btn-lg mt-1">Add image</label>
       <input id="file-input" type="file" @change="fileSelect" />
 
 
-      <button type="submit" class="btn customBtn btn-light btn-lg mt-1 ms-auto" @click="sendPost(this.post, title, content),
+      <button v-if="title!=''&& content!=''" type="submit" class="btn customBtn btn-light btn-lg mt-1 ms-auto" @click="sendPost(this.post, title, content),
       getPosts()">Send</button>
 
       <!--_____________________________________________________________________________________________________________________-->
@@ -456,14 +434,11 @@ export default {
               </div>
               <div id="like-count">{{ post.likes }}</div>
             </div>
-            <button id="edit" type="button" class="btn  btn-lg  ms-auto like"
-              @click="editPost(post._id, post.userId)">Edit</button>
-            <button id="delete" type="button" class="btn btn-lg  ms-auto like"
+            <button v-if="userId== post.userId || role== 'admin'" id="edit" type="button" class="btn  btn-lg  ms-auto like"
+              @click="editPost(post._id)">Edit</button>
+            <button v-if="userId== post.userId || role== 'admin'" id="delete" type="button" class="btn btn-lg  ms-auto like"
               @click="deletePost(post._id, post.userId)">Delete</button>
-
-            <!-- <button v-if="title" type="button" class="btn btn-lg  ms-auto like">test</button> -->
-
-          </div>
+            </div>
         </div>
       </div>
     </li>

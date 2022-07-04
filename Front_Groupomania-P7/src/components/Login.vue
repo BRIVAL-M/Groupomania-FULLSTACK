@@ -16,6 +16,7 @@ function logUser(email, password) {
   })
     .then(response => response.json())
     .then((res) => {
+    
 
       if (res.error) {//_____________________________________ Les erreurs de user.js dans le back
         console.log(res.error);
@@ -37,6 +38,7 @@ function logUser(email, password) {
         
         localStorage.setItem('token', res.token);
         localStorage.setItem('userId', res.userId);
+        localStorage.setItem('role', res.role);// Only to display the edit buttons
         localStorage.setItem('email', email);
         
         this.$router.push("/news");
@@ -66,7 +68,7 @@ function data() {
     email: "",
     password: "",
     error: this.error,
-    //isAdmin: "",
+    //isAdmin: 
   }
 
 }

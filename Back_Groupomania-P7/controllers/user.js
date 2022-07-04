@@ -39,19 +39,19 @@ exports.login = (req, res, next) => { // Login the user and create a token for h
           res.status(200).json({
 
             userId: user._id,
-            isAdmin: user.isAdmin,// new add
+            role: user.role,
 
 
 
 
             token: jwt.sign( // Create a token for the user
-              { userId: user._id },//, isAdmin: user.isAdmin
+              { userId: user._id,role: user.role},//, isAdmin: user.isAdmin
               process.env.JWT_PWD,
               { expiresIn: '24h' }
             )
 
           });
-          console.log("IsAdmin = ", user.isAdmin);
+          console.log("ROLE connecté = ", user.role);
         })
         .catch(error => res.status(500).json({ error }));
     })

@@ -5,6 +5,8 @@ const postSchema = mongoose.Schema({
   userId: {
     type: String,
     required: true,
+    
+
   },
   name: {
     type: String,
@@ -38,6 +40,7 @@ const postSchema = mongoose.Schema({
     type: [String],
     required: true,
   },
+
 
 });
 

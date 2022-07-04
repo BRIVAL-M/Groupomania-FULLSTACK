@@ -1,7 +1,18 @@
 
 <script>
 
+function logout() {//_________________________ Logout user
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    this.$router.push("/login");
+}
+
 function getPostById() {
+
+
 
     const id = window.location.href.split('/').pop(); // Get the id from the url
 
@@ -17,10 +28,14 @@ function getPostById() {
     })
         .then(response => response.json())
         .then((res) => {
-            console.log(res);
             this.post = res;
+
+            // console.log(res);
+            // this.post = res;
         })
         .catch(error => {
+
+
             console.log(error);
         });
 }
@@ -29,18 +44,12 @@ function getPostById() {
 
 function updatePost(post) {
 
-
-
     const formData = new FormData();
     if (post.imageUrl) {
         formData.append('image', post.imageUrl);
     }
-    //formData.append('userId', post.userId);
     formData.append('title', post.title);
     formData.append('content', post.content);
-
-
-
 
     const id = window.location.href.split('/').pop();
 
@@ -48,39 +57,25 @@ function updatePost(post) {
     fetch(url, {
         method: 'PUT',
         headers: {
-            // 'Content-Type': 'multipart/form-data',
             'Authorization': 'Bearer ' + localStorage.getItem("token")
         },
 
-        //    body: JSON.stringify(post,title, content, imageUrl)
         body: formData
     })
         .then(response => response.json())
         .then((res) => {
             console.log(res);
-            location.reload();/// en attendant de voir comment faire pour afficher la nouvelle image sans recharger la page
+            location.reload();
         })
         .catch(error => {
             console.log(error);
-
-            //     if (error.status !== 200) {
-            //    alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
-            //    localStorage.removeItem("token");
-            //     localStorage.removeItem("userId");
-            //     localStorage.removeItem("email");
-            //     this.$router.push("/login");
-            //     //console.log(error);
-            //     }
         });
 }
 
 
 
 
-// function rmImg(){
 
-
-// }
 
 
 
@@ -90,6 +85,7 @@ function data() { // _____________________________________ Data of user's posts
 
     return {
         posts: [],
+
         post: {
             //  userId: "",
             //  name: userName(),
@@ -111,7 +107,8 @@ export default {
 
     methods: {
         getPostById,
-        //rmImg,
+        logout,
+
 
         updatePost() {
 
@@ -171,6 +168,7 @@ export default {
             <div class="card-header">
                 <!-- <img src="/img_logo/icon.png" class="rounded-circle m-2" alt="Avatar"> -->
                 <h3>Modification du post</h3>
+
             </div>
 
             <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top mt-3" alt="...">

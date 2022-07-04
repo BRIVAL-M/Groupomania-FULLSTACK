@@ -1,7 +1,7 @@
 const Post = require('../models/Post');
 const fs = require('fs');
+const user = require('../controllers/user');
 const User = require('../models/User');
-//const User = require('../models/User');
 //const jwt = require('jsonwebtoken');//
 
 
@@ -18,6 +18,7 @@ const User = require('../models/User');
 
 
 exports.createPost = async (req, res, next) => {
+
 
 
 
@@ -49,63 +50,79 @@ exports.createPost = async (req, res, next) => {
 }
 
 
+
+
+
 exports.modifyPost = (req, res, next) => {
+  User.findOne({ _id: req.auth.userId })
+    .then(user => {
+      Post.findOne({ _id: req.params.id })
+        .then(post => {
 
+          if (post.userId == user._id || user.role == "admin") {
+            const postObject = req.file ?
+              {
+                title: req.body.title,
+                content: req.body.content,
+                imageUrl: req.file !== undefined ? `http://localhost:8080/images/${req.file.filename}` : '',
+              } : { ...req.body };
 
-  const postObject = req.file ?
+            Post.findByIdAndUpdate({ _id: req.params.id }, { ...postObject, })
 
-    {
-      // ...JSON.parse(req.body.post),
-      title: req.body.title,
-      content: req.body.content,
-      imageUrl: req.file !== undefined ? `http://localhost:8080/images/${req.file.filename}` : '',
-    } : { ...req.body };
+              .then(post => {
 
-  Post.findByIdAndUpdate({ _id: req.params.id }, { ...postObject, _id: req.params.id })
+                if (req.file) {
+                  const filename = post.imageUrl.split("/images/")[1]
+                  fs.unlink(`images/${filename}`, () => {
+                    res.status(200).json({ message: 'Post modifié !' });
+                  });
+                }
+              })
+              .catch(error => res.status(400).json({ error }));
+          } else {
+            res.status(401).json({ message: 'Vous n\'avez pas le droit de modifier ce post' })
+          }
+        }
+        )}
+    )}
 
-    .then(post => {
-
-      if (req.file) {
-        const filename = post.imageUrl.split("/images/")[1]/// pas sur
-        fs.unlink(`images/${filename}`, () => {
-          res.status(200).json({ message: 'Post modifié !' });
-        });
-      } else {
-        res.status(200).json({ message: 'Post modifié !' });
-      }
-    })
-    .catch(error => res.status(500).json({ error }))
-}
-//////////////////////////////////////////////SandBox//////////////////////////////////////////////////////////////////////////////////
-
-
-
-// exports.deletePost = (req, res, next) => {
-
-// }
-
-
-///////////////////////////////////////////////////////////
 exports.deletePost = (req, res, next) => {
+  console.log("test: " + req.auth.userId)
+  User.findOne({ _id: req.auth.userId })
+    .then(user => {
+      console.log("user: " + user)
 
+      console.log("req.bodyUserId =", req.body.userId)
+      Post.findOne({ _id: req.params.id })
+        .then(post => {
+          console.log("post: " + post, "user: " + req.params.id)
+          if (post.userId == user._id || user.role == "admin") {
 
-  Post.findOne({ _id: req.params.id })
-    .then((post) => {
-      const filename = post.imageUrl.split("/images/")[1]
-      fs.unlink(`images/${filename}`, () => {
-        Post.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Post supprimé !' }))
-        // .catch((error) => res.status(400).json({ error }))
-      })
-    })
-    .catch((error) => res.status(404).json({ error }))
+            const filename = post.imageUrl.split("/images/")[1]
+
+            fs.unlink(`images/${filename}`, () => {
+              Post.deleteOne({ _id: req.params.id })
+                .then(() => res.status(200).json({ message: 'Post supprimé !' }))
+                .catch((error) => res.status(400).json({ error }))
+            });
+          } else {
+            res.status(401).json({ message: 'Vous n\'avez pas le droit de supprimer ce post' })
+          }
+        }
+        )
+        .catch(error => res.status(500).json({ error }))
+    }
+    )
 }
-
 exports.getOnePost = (req, res, next) => {
+
+
   Post.findOne({ _id: req.params.id })
     .then(post => res.status(200).json(post))
     .catch(error => res.status(404).json({ error }));
 }
+
+
 
 exports.getAllPosts = (req, res, next) => {
   Post.find()
@@ -122,7 +139,7 @@ exports.likeAndDislike = (req, res, next) => {
   let like = req.body.like
   let userId = req.body.userId
   let postId = req.params.id
-  
+
 
 
   switch (like) { // Switch is used to add or remove a like or dislike
@@ -130,7 +147,7 @@ exports.likeAndDislike = (req, res, next) => {
       Post.updateOne({ _id: postId }, { $push: { usersLiked: userId }, $inc: { likes: +1 } })
         .then(() => res.status(200).json({ message: `J'aime` }))
         .catch((error) => res.status(400).json({ error }))
-////////////////////////////////////////////////////////////Coming soon
+    ////////////////////////////////////////////////////////////Coming soon
 
     //  break;// Break is used to stop the switch
 
@@ -142,14 +159,14 @@ exports.likeAndDislike = (req, res, next) => {
     //           .then(() => res.status(200).json({ message: `Neutre` }))
     //           .catch((error) => res.status(400).json({ error }))
     //       }
-        //   if (post.usersDisliked.includes(userId)) {
-        //     Post.updateOne({ _id: postId }, { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 } })
-        //       .then(() => res.status(200).json({ message: `Neutre` }))
-        //       .catch((error) => res.status(400).json({ error }))
-        //   }
-        // })
-       // .catch((error) => res.status(404).json({ error }))
-     // break;
+    //   if (post.usersDisliked.includes(userId)) {
+    //     Post.updateOne({ _id: postId }, { $pull: { usersDisliked: userId }, $inc: { dislikes: -1 } })
+    //       .then(() => res.status(200).json({ message: `Neutre` }))
+    //       .catch((error) => res.status(400).json({ error }))
+    //   }
+    // })
+    // .catch((error) => res.status(404).json({ error }))
+    // break;
 
     // case -1:// Case -1 is used to add a dislike
     //   Post.updateOne({ _id: postId }, { $push: { usersDisliked: userId }, $inc: { dislikes: +1 } })
