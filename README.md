@@ -1,7 +1,7 @@
 # Groupomania-FULLSTACK
 
-## Avant de commencer assurez-vous d'avoir NODE JS d'installé sur votre machine.
-Si ce n'est pas le cas vous pourrez facilement l'installer en suivant ce lien
+## Avant de commencer assurez-vous d'avoir NODE JS installé sur votre machine.
+Si ce n'est pas le cas, vous pourrez facilement l'installer en suivant ce lien
 https://nodejs.org/fr/download/
 
 ## Installation :
