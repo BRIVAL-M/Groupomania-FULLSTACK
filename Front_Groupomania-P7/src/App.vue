@@ -1,16 +1,9 @@
 
-
-
-
 <script>
-// import "bootstrap/dist/css/bootstrap.min.css";
-// import "../App.css";
 import Signup from "./components/Signup.vue";
-
-
-//import Nav from "./components/Navbar.vue";
-
-
+import Login from "./components/Login.vue";
+import News from "./components/News.vue";
+import Edit from "./components/Edit.vue";
 
 
 export default {
@@ -18,24 +11,14 @@ export default {
   components: {
     
    Signup,
-  
-
+    Login,
+    News,
+    Edit,
     
-    
- 
-  
-}
+  }
 };
-
-
-
 </script>
 <template>
-
- 
-  
-
-
 
 <router-view></router-view> 
 

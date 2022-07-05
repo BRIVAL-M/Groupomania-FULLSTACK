@@ -19,10 +19,9 @@ exports.signup = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
-
 }
 
-exports.login = (req, res, next) => { // Login the user and create a token for him
+exports.login = (req, res, next) => { //______ Login the user and create a token for him
 
   User.findOne({ email: req.body.email })
 
@@ -30,7 +29,7 @@ exports.login = (req, res, next) => { // Login the user and create a token for h
       if (!user) {
         return res.status(401).json({ error: 'Utilisateur non trouvé !' });
       }
-      bcrypt.compare(req.body.password, user.password)// compare the password with the hash
+      bcrypt.compare(req.body.password, user.password)//______ Compare the password with the hash
         .then(valid => {
           if (!valid) {
             return res.status(401).json({ error: 'Mot de passe incorrect !' });
@@ -41,17 +40,12 @@ exports.login = (req, res, next) => { // Login the user and create a token for h
             userId: user._id,
             role: user.role,
 
-
-
-
-            token: jwt.sign( // Create a token for the user
-              { userId: user._id,role: user.role},//, isAdmin: user.isAdmin
+            token: jwt.sign( //__________________________________ Create a token for the user
+              { userId: user._id, role: user.role },
               process.env.JWT_PWD,
               { expiresIn: '24h' }
             )
-
           });
-          console.log("ROLE connecté = ", user.role);
         })
         .catch(error => res.status(500).json({ error }));
     })

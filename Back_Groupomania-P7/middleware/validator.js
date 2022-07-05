@@ -2,7 +2,7 @@ const { check, validationResult } = require('express-validator');
 // Use express-validator middleware in order to check the user input
 
 
-const validate = [ // Hight password security in order to create a user
+const validate = [ //_____ Hight password security in order to create a user
     
     check('email')
         .isEmail()

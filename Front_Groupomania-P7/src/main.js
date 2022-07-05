@@ -14,7 +14,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import { createRouter, createWebHistory } from 'vue-router'
 
-const routes = [
+const routes = [ // Routes are the links that the user can click on to go to a specific page
 
     { path: '/', component: Home },
     { path: '/signup', component: Signup },
@@ -25,15 +25,12 @@ const routes = [
 
 const router = createRouter({ history: createWebHistory(), routes })
 
-/////////////////////////////////////////////////////////////////////// A revoir ... :/ 
-router.beforeEach((to, from) => {
-    console.log("from:", from)
-    console.log("to:", to)
-    if (isLoginRequired(to)) {
+
+router.beforeEach((to) => { // BeforeEach is a hook that is called before each route transition
+
+    if (isLoginRequired(to)) { // If the user is not logged in and he tries to go to a private page, he is redirected to the login page
         return router.push('/login')
     }
-
-
 
 })
 function isLoginRequired(to) {
@@ -43,36 +40,23 @@ function isLoginRequired(to) {
     return false
 }
 
-function isPrivatePage(to) {
+function isPrivatePage(to) { // Define if the page is private or not
     const publicPages = ['/login', '/signup', '/']
     return !publicPages.includes(to.path)
 }
-function isTokenInCache() {
+function isTokenInCache() { // Get if the token is in the cache
     return localStorage.getItem('token') != null
 }
 function isTokenValid() {
 
-
-
     const token = localStorage.getItem('token')
-
-
-
-    return token != null //&& jwt.verify(token, '9490588a-bf5b-4cac-91d8-8718a916597b') // a revoir ...
-
-
+    return token != null
 }
-
-
-
-
 
 createApp(App).mount('#app')
 const app = createApp(App)
 app.use(BootstrapVue3)
 app.use(router)
-
-
 
 app.mount('#app')
 

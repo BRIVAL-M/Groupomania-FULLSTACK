@@ -14,7 +14,7 @@ require('dotenv').config();// Dotenv is a module that helps us to get the enviro
 //_______________________________________________________ SECURITY
 
 const limiter = require("./middleware/rateLimit"); // Import the rateLimit middleware to limit the number of requests per IP "BRUTE FORCE"
-//const helmet = require("helmet");// Import helmet to secure the server with some headers (security)
+
 const cors = require('cors');
 
 
@@ -44,8 +44,8 @@ app.use((req, res, next) => {// Add the header Access-Control-Allow-Origin to al
    next();
 });
 
-//app.use(helmet());
-app.use("/api/auth",limiter ); //
+
+app.use("/api/auth",limiter ); // Use the rateLimit middleware to limit the number of requests per IP "BRUTE FORCE"
 
 
 app.use(bodyParser.json());// Use body-parser to parse the body of the request

@@ -5,8 +5,6 @@ const postSchema = mongoose.Schema({
   userId: {
     type: String,
     required: true,
-    
-
   },
   name: {
     type: String,
@@ -27,10 +25,7 @@ const postSchema = mongoose.Schema({
     trim: true
   },
   imageUrl: {
-    // type image 
     type: String,
-    // required:true,
-
   },
   likes: {
     type: Number,
@@ -40,19 +35,6 @@ const postSchema = mongoose.Schema({
     type: [String],
     required: true,
   },
-
-
 });
-
-
-
-
-
-
-// {
-//   timestamp:true,
-// }
-
-
 
 module.exports = mongoose.model('post', postSchema);

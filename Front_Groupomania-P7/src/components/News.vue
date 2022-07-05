@@ -16,10 +16,7 @@ function dateTime() {// _________________________Date & hours of the user send h
   const date = now.getDate();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  // const hours = now.getHours();
-  // const minutes = now.getMinutes() / 1;
-
-  return date + "/" + month + "/" + year;//+ " à " + hours + "h" + minutes;
+  return date + "/" + month + "/" + year;
 }
 
 function userName() {//____________________________Find the user name from him email
@@ -30,14 +27,11 @@ function userName() {//____________________________Find the user name from him e
 
 function sendPost(post) { //___________________________ Send a post
 
-   const url = 'http://localhost:8080/api/posts';
+  const url = 'http://localhost:8080/api/posts';
   const formData = new FormData();
   if (post.imageUrl) {
     formData.append('image', post.imageUrl);
   }
-
-
-
 
   formData.append('userId', localStorage.getItem('userId'));
   formData.append('name', post.name);
@@ -46,8 +40,6 @@ function sendPost(post) { //___________________________ Send a post
   formData.append('content', post.content);
   formData.append('likes', post.likes);
   formData.append('usersLiked', post.usersLiked);
-  
-
 
   fetch(url, {
     method: 'POST',
@@ -56,26 +48,19 @@ function sendPost(post) { //___________________________ Send a post
   })
     .then(response => response.json())
     .then((res) => {
-
-
       console.log(res);
-      location.reload(); // En attendant..... 
-
-      // this.$router.push("/news");
-      // this.post = res;
-
-
-
-      // })
-      // .catch(error => {
-      //     if (error.status !== 200) {
-      //    alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
-      //    localStorage.removeItem("token");
-      //     localStorage.removeItem("userId");
-      //     localStorage.removeItem("email");
-      //     this.$router.push("/login");
-      //     //console.log(error);
-      //   }
+      location.reload();
+    })
+    .catch(error => {
+      if (error.status !== 200) {
+        alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        localStorage.removeItem("role");
+        this.$router.push("/login");
+        console.log(error);
+      }
     })
 }
 
@@ -83,7 +68,7 @@ function data() { // ______________________________________ Data of user's posts
 
   return {
     posts: [],
-    userId:"",
+    userId: "",
     title: '',
     content: '',
     post: {
@@ -95,36 +80,22 @@ function data() { // ______________________________________ Data of user's posts
       imageUrl: '',
       likes: 0,
       usersLiked: [],
-
-
-
-    
-
-
-
     },
   }
 }
 
 function getPosts() {//_________________________________________ Get all posts 
 
-
-
   const url = 'http://localhost:8080/api/posts';
   fetch(url, {
     method: 'GET',
     headers: {
-
-      // 'Content-Type': 'application/json',
-
-      //'Content-Type': 'multipart/form-data',
-      // 'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem("token")
     }
   })
     .then(response => response.json())
     .then((res) => {
-      
+
       this.posts = res.reverse();
 
     })
@@ -134,105 +105,80 @@ function getPosts() {//_________________________________________ Get all posts
         localStorage.removeItem("token");
         localStorage.removeItem("userId");
         localStorage.removeItem("email");
+        localStorage.removeItem("role");
         this.$router.push("/login");
-        //console.log(error);
+        console.log(error);
       }
     })
 }
 
+function deletePost(id) {//___________________________________ Delete a post if this user is the owner of the post
 
 
+  const url = 'http://localhost:8080/api/posts/' + id;
+  fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem("token")
+    },
+
+    body: JSON.stringify({ id: id })
+  })
+    .then(response => response.json())
+    .then((res) => {
 
 
-function deletePost(id, userId) {//___________________________________ Delete a post if this user is the owner of the post
-
-
-    const url = 'http://localhost:8080/api/posts/' + id;
-    fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem("token")
-      },
-
-      body: JSON.stringify({ id: id })
+      console.log(res);
+      this.getPosts();
     })
-      .then(response => response.json())
-      .then((res) => {
-       
 
-        console.log(res);
-        this.getPosts();
-      })
-
-      .catch(error => {
-        if (error.status !== 200) {
-          alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
-          localStorage.removeItem("token");
-          localStorage.removeItem("userId");
-          localStorage.removeItem("email");
-          this.$router.push("/login");
-          console.log(error);
-        }
-         
-        
-      })
-  }
-
-
-
-
-
-
-
-
-
-//import Card from "./Card.vue"; // Pour le moment je ne peux pas binder les infos de l'utilisateur dans le card 
-
+    .catch(error => {
+      if (error.status !== 200) {
+        alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        localStorage.removeItem("role");
+        this.$router.push("/login");
+        console.log(error);
+      }
+    })
+}
 
 function editPost(id) {//_____________________________________ Edit a post by id 
 
-
-const url = 'http://localhost:8080/api/posts/' + id;
-    fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + localStorage.getItem("token")
-      },
-    })
-      .then(response => response.json())
+  const url = 'http://localhost:8080/api/posts/' + id;
+  fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem("token")
+    },
+  })
+    .then(response => response.json())
+    .then((res) => {
       
+      this.post = res;
+      this.$router.push("/edit/" + id);
+    })
 
-      .then((res) => {
-        console.log(res);
-        this.post = res;
-       
-        this.$router.push("/edit/" + id);
-      })
+    .catch(error => {
 
-      .catch(error => {
-       
-        if (error.status !== 200) {
-          alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");//_____ Get  if the token is valid !
-          localStorage.removeItem("token");
-          localStorage.removeItem("userId");
-          localStorage.removeItem("email");
-          this.$router.push("/login");
-          console.log(error);
-        }
+      if (error.status !== 200) {
+        alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");//_____ Get  if the token is valid !
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        localStorage.removeItem("role");
+        this.$router.push("/login");
+        console.log(error);
+      }
     });
 
-  }
+}
 
-
-
-
-
-
-
-
-function likePost(id, userId, like, usersLiked) {//_____________________________________ Like a post by id 
+function likePost(id, like, usersLiked) {//_____________________________________ Like a post by id 
 
 
   const currentUserId = localStorage.getItem("userId"); //_________________________________________________Only one like per user
@@ -263,34 +209,19 @@ function likePost(id, userId, like, usersLiked) {//_____________________________
     .then((res) => {
       console.log(res);
       this.getPosts();
-      
+
     })
-
-  console.log("ID DU POST: ", id);
-  console.log("USER ID: ", userId);
-  console.log("NEW LIKE: ", like);
-  console.log("USER LIKED: ", usersLiked);
-
+    .catch(error =>{
+      console.log(error);
+    })
 }
-
-
 
 export default {
   name: "News", data,
 
-
-
-
-
   methods: {
-    //   sendPost() {
-    // if (this.title === '' || this.content === '' ) {
-    //   alert('Veuillez remplir tous les champs.')
-    //   return;
-    // }
-    //   },
+
     sendPost() {
-      
 
       this.post.userId = localStorage.getItem("userId"),
         this.post.date = dateTime(),
@@ -302,49 +233,33 @@ export default {
         this.post.usersLiked = [],
 
         sendPost(this.post)
-     
-
     },
 
     fileSelect(e) {//_______________________________ Select the image to upload
       console.log("e: ", e.target.files[0]);
       this.imageUrl = e.target.files[0];
-
     },
+
     likePost,
     dateTime,
     getPosts,
     logout,
     deletePost,
     editPost,
-
-
-
-
   },
 
-
-  components: {
-    // Card,
-  },
   mounted() { // mounted() est appelé une fois que le composant est chargé
+
     this.getPosts()
-  
-      this.userId = localStorage.getItem("userId");
-      this.role = localStorage.getItem("role");
 
-    }
+    this.userId = localStorage.getItem("userId");
+    this.role = localStorage.getItem("role");
   }
-
-
-
+}
 </script>
 <template>
   <div class="container-sm ">
-
     <nav class=" navbar navbar-expand-lg navbar-light bg-light mt-3">
-
-
       <div class="container-fluid bg-light">
         <h1 class="navbar-brand">Groupomania </h1>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -354,7 +269,6 @@ export default {
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <!-- <a class="nav-link active" aria-current="page" href="#">Home</a> -->
               <button class="btn  like btn-lg mt-1 m-1 m-lg-3 "
                 @click="getPosts(this.post, name, title, imageUrl, content, usersLiked, date)">All
                 posts</button>
@@ -367,78 +281,42 @@ export default {
     <div class="form-floating">
       <h3 class="navbar-brand text-center m-3">Quoi de neuf {{ this.post.name }} ?</h3>
       <div class="d-flex bg-light">
-
         <textarea class="form-control m-3" placeholder="Title" v-model="title" type="text"></textarea>
-
         <textarea class="form-control m-3" placeholder="Tape your text" id="floatingTextarea" v-model="content"
           type="text"></textarea>
-
-
-
       </div>
     </div>
-    <!-- <label for="file-input" class="btn  btn-lg  ms-auto like m-3">Ajout d'image</label>
-      <input id="file-input" type="file" @change="fileSelect" />
-
-      <button type="submit" class="btn  btn-lg  ms-auto like m-3"  @click="sendPost(this.post,title,content),
-      getPosts()">Send</button> -->
     <div class="d-flex  mt-1">
-      <label v-if="title!=''&& content!=''" for="file-input" class=" btn-light customBtn btn-lg mt-1">Add image</label>
+      <label v-if="title != '' && content != ''" for="file-input" class=" btn-light customBtn btn-lg mt-1">Add image</label>
       <input id="file-input" type="file" @change="fileSelect" />
-
-
-      <button v-if="title!=''&& content!=''" type="submit" class="btn customBtn btn-light btn-lg mt-1 ms-auto" @click="sendPost(this.post, title, content),
+      <button v-if="title != '' && content != ''" type="submit" class="btn customBtn btn-light btn-lg mt-1 ms-auto" @click="sendPost(this.post, title, content),
       getPosts()">Send</button>
-
-      <!--_____________________________________________________________________________________________________________________-->
-
-
-      <!--_____________________________________________________________________________________________________________________-->
-
-
-
-
     </div>
     <hr class="mt-4 dropdown-divider" />
-
-
     <li v-for="post in posts">
-
       <div class="card mb-3 m-auto">
         <div class="card-header mb-3">
           <img src="/img_logo/icon.png" class="rounded-circle m-2" alt="logo de groupomania">
-
           {{ post.name }} &#128172 {{ post.date }}
-
         </div>
-
         <img v-if="post.imageUrl" :src="post.imageUrl" class="card-img-top" alt="image postée par un utilisateur">
         <hr class="mt-3 dropdown-divider" />
-
         <div class="card-body">
-
           <h5 class="card-title">{{ post.title }}</h5>
           <p class="card-text">{{ post.content }}</p>
-
-
           <div class="d-flex bg-light">
-
-
             <div class="like">
-
-
-              <div id="heart" @click="likePost(post._id, post.userId, post.likes, post.usersLiked)">
-
+              <div id="heart" @click="likePost(post._id, post.likes, post.usersLiked)">
                 <div id="left" class="segments"></div>
                 <div id="right" class="segments"></div>
               </div>
               <div id="like-count">{{ post.likes }}</div>
             </div>
-            <button v-if="userId== post.userId || role== 'admin'" id="edit" type="button" class="btn  btn-lg  ms-auto like"
-              @click="editPost(post._id)">Edit</button>
-            <button v-if="userId== post.userId || role== 'admin'" id="delete" type="button" class="btn btn-lg  ms-auto like"
-              @click="deletePost(post._id, post.userId)">Delete</button>
-            </div>
+            <button v-if="userId == post.userId || role == 'admin'" id="edit" type="button"
+              class="btn  btn-lg  ms-auto like" @click="editPost(post._id)">Edit</button>
+            <button v-if="userId == post.userId || role == 'admin'" id="delete" type="button"
+              class="btn btn-lg  ms-auto like" @click="deletePost(post._id)">Delete</button>
+          </div>
         </div>
       </div>
     </li>
@@ -447,6 +325,7 @@ export default {
 
 
 <style >
+
 .card {
 
   box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.42);
@@ -529,20 +408,10 @@ body {
   box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.42);
 }
 
-/* .card {
-  width:50%;
-} */
-
 img {
   max-height: 30rem;
   object-fit: contain;
 }
-
-/* .card-img-top{
-  background-color: #FD2D01;
- } */
-
-
 
 .like {
   height: 3rem;

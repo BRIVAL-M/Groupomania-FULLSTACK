@@ -1,9 +1,9 @@
-const multer = require('multer');// Import the multer middleware for upload the files "images"
+const multer = require('multer');//___ Import the multer middleware for upload the files "images"
 
 
 
 
-const MIME_TYPE = { // Object containing the MIME type of the files that can be uploaded
+const MIME_TYPE = { //_____ Object containing the MIME type of the files that can be uploaded
     'image/png': 'png',
     'image/jpeg': 'jpg',
     'image/jpg': 'jpg',
@@ -26,12 +26,5 @@ const storage = multer.diskStorage({
 }
 );
 
-
-
-
-
-
-
-// module.exports = multer({storage: storage}).single('image'); // Export the multer middleware with the storage configuration
-module.exports = multer({ storage: storage,  });// limits 2mb __limits: { fileSize: 2097152 }
+module.exports = multer({ storage: storage,  });
 
