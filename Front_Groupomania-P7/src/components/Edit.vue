@@ -34,7 +34,7 @@ function getPostById() { //_____________________________________ Get post by id
 }
 
 function updatePost(post) { //________________________ Update post
-
+location.reload();
     const formData = new FormData();
     if (post.imageUrl) {
         formData.append('image', post.imageUrl);
@@ -56,8 +56,8 @@ function updatePost(post) { //________________________ Update post
         .then(response => response.json())
         .then((res) => {
             console.log(res);
-            location.reload();
-        })
+            
+           })
         .catch(error => {
             console.log(error);
         });

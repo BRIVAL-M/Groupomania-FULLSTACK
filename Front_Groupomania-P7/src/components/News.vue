@@ -50,7 +50,7 @@ function sendPost(post) { //___________________________ Send a post
     .then((res) => {
       console.log(res);
       location.reload();
-    })
+     })
     .catch(error => {
       if (error.status !== 200) {
         alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");
@@ -97,6 +97,8 @@ function getPosts() {//_________________________________________ Get all posts
     .then((res) => {
 
       this.posts = res.reverse();
+      // this.title = "";
+      // this.content = "";
 
     })
     .catch(error => {
@@ -160,6 +162,7 @@ function editPost(id) {//_____________________________________ Edit a post by id
     .then((res) => {
       
       this.post = res;
+      
       this.$router.push("/edit/" + id);
     })
 
@@ -216,6 +219,7 @@ function likePost(id, like, usersLiked) {//_____________________________________
     })
 }
 
+
 export default {
   name: "News", data,
 
@@ -238,6 +242,8 @@ export default {
     fileSelect(e) {//_______________________________ Select the image to upload
       console.log("e: ", e.target.files[0]);
       this.imageUrl = e.target.files[0];
+    
+      this.imageName = e.target.files[0].name;
     },
 
     likePost,
@@ -246,15 +252,17 @@ export default {
     logout,
     deletePost,
     editPost,
+    
   },
+ 
 
   mounted() { // mounted() est appelé une fois que le composant est chargé
-
+ 
     this.getPosts()
 
     this.userId = localStorage.getItem("userId");
     this.role = localStorage.getItem("role");
-  }
+    }
 }
 </script>
 <template>
@@ -288,6 +296,7 @@ export default {
     </div>
     <div class="d-flex  mt-1">
       <label v-if="title != '' && content != ''" for="file-input" class=" btn-light customBtn btn-lg mt-1">Add image</label>
+      <!-- <small v-if ="this.imageName" class="text-danger">{{ imageName }}</small> -->
       <input id="file-input" type="file" @change="fileSelect" />
       <button v-if="title != '' && content != ''" type="submit" class="btn customBtn btn-light btn-lg mt-1 ms-auto" @click="sendPost(this.post, title, content),
       getPosts()">Send</button>
