@@ -1,5 +1,6 @@
 # Groupomania-FULLSTACK
 ## Installation :
+## Avant de commencer assurez-vous d'avoir NODE JS d'installé sur votre machine.
 #### Créer un dossier dans lequel vous clonerez le repos:
 Ouvrez un terminal dans ce dossier et copiez cette commande :  
 git clone https://github.com/BRIVAL-M/Groupomania-FULLSTACK.git
