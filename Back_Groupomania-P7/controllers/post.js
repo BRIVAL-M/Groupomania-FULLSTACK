@@ -83,8 +83,7 @@ exports.deletePost = (req, res, next) => {//______________________ Delete a post
           } else {
             res.status(401).json({ message: 'Vous n\'avez pas le droit de supprimer ce post' })
           }
-        }
-        )
+        })
         .catch(error => res.status(500).json({ error }))
     }
     )
