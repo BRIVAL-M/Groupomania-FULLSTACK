@@ -64,15 +64,13 @@ exports.modifyPost = (req, res, next) => { //___________________ Modify a post
 }
 
 exports.deletePost = (req, res, next) => {//______________________ Delete a post
-  console.log("test: " + req.auth.userId)
+  
   User.findOne({ _id: req.auth.userId })
     .then(user => {
-      console.log("user: " + user)
-
-      console.log("req.bodyUserId =", req.body.userId)
+      
       Post.findOne({ _id: req.params.id })
         .then(post => {
-          console.log("post: " + post, "user: " + req.params.id)
+         
           if (post.userId == user._id || user.role == "admin") {
 
             const filename = post.imageUrl.split("/images/")[1]
