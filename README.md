@@ -7,6 +7,7 @@ git clone https://github.com/BRIVAL-M/Groupomania-FULLSTACK.git
 #### Rendez-vous dans le dossier Backend avec votre terminal :
 
 Installez les modules avec : npm install
+
 Vous pouvez maintenant ouvrir ce dossier
 dans votre éditeur de code, cherchez le fichier ENV 
 et collez les informations qui vous ont été fournies.
@@ -14,7 +15,7 @@ et collez les informations qui vous ont été fournies.
 #### Pour démarer le server du back : nodemon server
 
 ### Front End :
-Rendez-vous dans le dossier Frontend avec votre terminal :
+#### Rendez-vous dans le dossier Frontend avec votre terminal :
 Installez les modules avec : npm install
 
 #### Pour démarer le front : npm run dev
