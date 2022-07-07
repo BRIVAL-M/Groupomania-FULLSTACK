@@ -31,8 +31,8 @@ merci de vous rendre à l'adresse indiquée sur le terminal.
 
 ## Technologies utilisées dans ce projet :
 ### Back End :
-NodeJs / Express / Express-rate-limit / Express-validator 
-Dotenv / Jsonwebtoken / Bcrypt / Cors / Multer / Mongoose
+NodeJs / Express / Express-rate-limit / Express-validator /
+Dotenv / Jsonwebtoken / Bcrypt / Cors / Multer / Mongoose /
 Mongoose-unique-validator
 #### Base de données :
 MongoDb
