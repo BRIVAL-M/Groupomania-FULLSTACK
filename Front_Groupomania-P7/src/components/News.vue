@@ -243,7 +243,7 @@ export default {
       console.log("e: ", e.target.files[0]);
       this.imageUrl = e.target.files[0];
     
-      this.imageName = e.target.files[0].name;
+     // this.imageName = e.target.files[0].name;
     },
 
     likePost,
@@ -399,6 +399,7 @@ textarea {
 p {
   font-size: 1.5rem;
   font-family: "lato";
+  color: #4E5166;
 }
 
 li {
@@ -420,6 +421,7 @@ body {
 img {
   max-height: 30rem;
   object-fit: contain;
+  
 }
 
 .like {

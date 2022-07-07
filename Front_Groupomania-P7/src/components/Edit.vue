@@ -29,7 +29,16 @@ function getPostById() { //_____________________________________ Get post by id
             this.post = res;
         })
         .catch(error => {
-            console.log(error);
+             if (error.status !== 200) {
+        alert("Oups ! Un problème est survenu. Veuillez vous reconnecter.");//_____ Get  if the token is valid !
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        localStorage.removeItem("role");
+        this.$router.push("/login");
+        console.log(error);
+      }
+            
         });
 }
 
